@@ -293,13 +293,14 @@ const DEFAULT_STATE = {
     Object.assign({}, EMPTY_PROFILE, {
       label: 'Charlotte & Camille', name: 'Charlotte & Camille', title: 'Assistantes de choc ⚡',
       photo: 'assistantes.png', phone1Label: 'Charlotte', phone1: '06 58 04 21 46',
-      phone2Label: 'Camille', phone2: '06 49 50 51 24', logoInline: false, divider: true, showLegal: false
+      phone2Label: 'Camille', phone2: '06 49 50 51 24', logoInline: true, divider: false, showLegal: false
     })
   ],
   active: 0,
   variant: 'desktop',
   screen: 'desktop',
-  phoneImages: true
+  phoneImages: true,
+  layoutV3: true
 };
 
 let state = loadState();
@@ -327,6 +328,12 @@ function loadState() {
   s.company = Object.assign(clone(DEFAULT_STATE.company), s.company);
   s.profiles = s.profiles.map(p => Object.assign(clone(EMPTY_PROFILE), { logoInline: !p.divider }, p));
   if (s.active >= s.profiles.length) s.active = 0;
+  // Charlotte & Camille passent à la même mise en page qu'Antoine (une seule fois,
+  // pour ne pas écraser un réglage fait ensuite à la main).
+  if (!s.layoutV3) {
+    s.profiles.forEach(p => { if (p.photo === 'assistantes.png') { p.logoInline = true; p.divider = false; } });
+    s.layoutV3 = true;
+  }
   return s;
 }
 
