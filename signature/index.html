@@ -241,6 +241,7 @@ const PROFILE_SCHEMA = [
   ['assistantName', 'Assistante — prénom'],
   ['assistantEmail', 'Assistante — e-mail', 'email'],
   ['check', 'logoInline', 'Logo encastré à côté du nom'],
+  ['check', 'photoRight', 'Photo à droite du nom (avec logo encastré)'],
   ['check', 'divider', 'Trait vertical après la photo'],
   ['check', 'showLegal', 'Afficher les mentions réglementaires']
 ];
@@ -267,7 +268,7 @@ const FONTS = [
 
 const EMPTY_PROFILE = {
   label: '', name: '', title: '', photo: '', address: '', phone1Label: '', phone1: '', phone2Label: '', phone2: '',
-  website: '', email: '', booking: '', assistantIntro: '', assistantName: '', assistantEmail: '', logoInline: true, divider: false, showLegal: true
+  website: '', email: '', booking: '', assistantIntro: '', assistantName: '', assistantEmail: '', logoInline: true, photoRight: true, divider: false, showLegal: true
 };
 
 const DEFAULT_STATE = {
@@ -325,7 +326,7 @@ function loadState() {
   if (!s || !Array.isArray(s.profiles) || !s.profiles.length) return clone(DEFAULT_STATE);
   s = Object.assign(clone(DEFAULT_STATE), s);
   s.company = Object.assign(clone(DEFAULT_STATE.company), s.company);
-  s.profiles = s.profiles.map(p => Object.assign(clone(EMPTY_PROFILE), { logoInline: !p.divider }, p));
+  s.profiles = s.profiles.map(p => Object.assign(clone(EMPTY_PROFILE), { logoInline: !p.divider, photoRight: true }, p));
   if (s.active >= s.profiles.length) s.active = 0;
   return s;
 }
@@ -462,7 +463,28 @@ function buildDesktop(p, c, pv) {
   }
   const bW = 470;
   let html;
-  if (inline) {
+  if (inline && p.photoRight && p.photo) {
+    // Logo | nom | photo : la photo flotte à droite. Sur mobile, logo et photo
+    // restent sur la même ligne et le nom passe dessous. Outlook Windows
+    // (qui ignore float) reçoit un tableau équivalent via [if mso].
+    const logoImg = `<img src="${img(c.logo, pv)}" width="88" height="42" alt="${esc(c.company)}" style="display:block;border:0;width:88px;height:42px;">`;
+    const photoImg = extra => `<img src="${img(p.photo, pv)}" width="80" height="80" alt="${esc(p.name)}"${extra || ''} style="display:block;border:0;width:80px;height:80px;${extra ? 'float:right;margin:0 0 0 16px;' : ''}">`;
+    const W = 108 + 340 + 96;
+    // Bloc d'en-tête limité à W pour que la photo reste près du nom ;
+    // les mentions en bas peuvent aller jusqu'à 600 px.
+    html = `<div style="${S.t(13, 20)}max-width:600px;"><div style="max-width:${W}px;">` +
+      `<!--[if mso]><table ${TABLE}><tr>` +
+      `<td width="108" valign="middle" style="vertical-align:middle;">${logoImg}</td>` +
+      `<td width="340" valign="middle" style="vertical-align:middle;">${id}</td>` +
+      `<td width="96" valign="middle" align="right" style="vertical-align:middle;padding:0 0 8px 16px;">${photoImg()}</td>` +
+      `</tr></table><![endif]-->` +
+      `<!--[if !mso]><!--><div style="font-size:0;line-height:0;">` +
+      photoImg(' align="right"') +
+      `<div style="display:inline-block;vertical-align:middle;width:108px;padding:19px 0;">${logoImg}</div>` +
+      `<div style="display:inline-block;vertical-align:middle;width:100%;max-width:340px;padding:12px 0;">${id}</div>` +
+      `</div><div style="clear:both;font-size:0;line-height:0;">&nbsp;</div><!--<![endif]-->` +
+      `<div style="font-size:6px;line-height:6px;">&nbsp;</div>` + b + `</div>`;
+  } else if (inline) {
     // Ligne 1 : photo | logo | nom — sur mobile, photo et logo restent côte à côte
     // et le nom passe dessous. Ligne 2 : coordonnées alignées sous le logo
     // (la colonne vide de gauche disparaît d'elle-même sur mobile).
@@ -478,7 +500,7 @@ function buildDesktop(p, c, pv) {
   if (p.showLegal && (c.legalLeft || c.legalRight)) {
     const block = (title, text) => text
       ? `<div style="${S.t(10, 14, '#6b7280', 'padding:12px 16px 0 0;')}">${title ? `<b>${esc(title)} :</b><br>` : ''}${lines(text)}</div>` : '';
-    const half = Math.floor((inline ? aW + 500 : aW + bW) / 2);
+    const half = Math.floor((inline && p.photoRight && p.photo ? 600 : inline ? aW + 500 : aW + bW) / 2);
     html += fluid([{ w: half, html: block(c.legalLeftTitle, c.legalLeft) }, { w: half, html: block(c.legalRightTitle, c.legalRight) }]);
   }
   return html + `</div>`;
@@ -493,10 +515,9 @@ function buildPhone(p, c, withImages, pv) {
     ? `<img src="${img(name, pv)}" width="15" height="15" alt="" style="width:15px;height:15px;border:0;vertical-align:-3px;">&nbsp; ` : '';
 
   if (withImages && (p.photo || c.logo)) {
-    let h = '';
-    if (p.photo) h += `<img src="${img(p.photo, pv)}" width="60" height="60" alt="${esc(p.name)}" style="width:60px;height:60px;border:0;vertical-align:middle;">`;
-    if (p.photo && c.logo) h += `&nbsp;&nbsp;&nbsp;`;
-    if (c.logo) h += `<img src="${img(c.logo, pv)}" width="63" height="30" alt="${esc(c.company)}" style="width:63px;height:30px;border:0;vertical-align:middle;">`;
+    const photo = p.photo ? `<img src="${img(p.photo, pv)}" width="60" height="60" alt="${esc(p.name)}" style="width:60px;height:60px;border:0;vertical-align:middle;">` : '';
+    const logo = c.logo ? `<img src="${img(c.logo, pv)}" width="63" height="30" alt="${esc(c.company)}" style="width:63px;height:30px;border:0;vertical-align:middle;">` : '';
+    const h = (p.logoInline && p.photoRight ? [logo, photo] : [photo, logo]).filter(Boolean).join('&nbsp;&nbsp;&nbsp;');
     out.push(`<div style="margin:0 0 8px;">${h}</div>`);
   }
   out.push(`<div style="${S.t(16, 22, '#111827')}"><b>${esc(p.name)}</b>${c.company ? ` <span style="color:#9ca3af;">|</span> <i>${esc(c.company)}</i>` : ''}</div>`);
