@@ -412,14 +412,15 @@ function phoneInner(label, num, S) {
 
 function buildDesktop(p, c, pv) {
   const S = styles(c);
-  const PHOTO = 90, LOGO_W = 80, LOGO_H = 38;
-
   // Logo « encastré » : à côté du nom, les coordonnées s'alignent dessous
   const inline = p.logoInline && c.logo;
+  // En mode encastré, photo un peu plus petite et sans marge basse pour
+  // limiter l'espace entre la fonction et les coordonnées
+  const PHOTO = inline ? 80 : 90, PHOTO_PB = inline ? 4 : 12, LOGO_W = 80, LOGO_H = 38;
 
   // Bloc A : photo (+ trait) + logo
   let a = `<table ${TABLE}><tr>`;
-  if (p.photo) a += `<td valign="middle" style="vertical-align:middle;padding:0 16px 12px 0;"><img src="${img(p.photo, pv)}" width="${PHOTO}" height="${PHOTO}" alt="${esc(p.name)}" style="display:block;border:0;width:${PHOTO}px;height:${PHOTO}px;"></td>`;
+  if (p.photo) a += `<td valign="middle" style="vertical-align:middle;padding:0 16px ${PHOTO_PB}px 0;"><img src="${img(p.photo, pv)}" width="${PHOTO}" height="${PHOTO}" alt="${esc(p.name)}" style="display:block;border:0;width:${PHOTO}px;height:${PHOTO}px;"></td>`;
   if (p.divider) a += `<td width="2" style="width:2px;background:#1f2937;font-size:0;line-height:0;padding:0;">&nbsp;</td><td width="16" style="width:16px;font-size:0;line-height:0;padding:0 0 12px;">&nbsp;</td>`;
   if (c.logo && !inline) a += `<td valign="middle" style="vertical-align:middle;padding:0 16px 12px 0;"><img src="${img(c.logo, pv)}" width="${LOGO_W}" height="${LOGO_H}" alt="${esc(c.company)}" style="display:block;border:0;width:${LOGO_W}px;height:${LOGO_H}px;"></td>`;
   a += `</tr></table>`;
@@ -465,10 +466,10 @@ function buildDesktop(p, c, pv) {
     // Ligne 1 : photo | logo | nom — sur mobile, photo et logo restent côte à côte
     // et le nom passe dessous. Ligne 2 : coordonnées alignées sous le logo
     // (la colonne vide de gauche disparaît d'elle-même sur mobile).
-    const logo = `<div style="padding:0 20px 12px 0;"><img src="${img(c.logo, pv)}" width="88" height="42" alt="${esc(c.company)}" style="display:block;border:0;width:88px;height:42px;"></div>`;
+    const logo = `<div style="padding:0 20px 0 0;"><img src="${img(c.logo, pv)}" width="88" height="42" alt="${esc(c.company)}" style="display:block;border:0;width:88px;height:42px;"></div>`;
     const W = aW + 108 + 392;
     html = `<div style="${S.t(13, 20)}max-width:${W}px;">` +
-      fluid([{ w: aW, html: a }, { w: 108, html: logo }, { w: 392, html: `<div style="padding:0 0 12px;">${id}</div>` }], 'middle') +
+      fluid([{ w: aW, html: a }, { w: 108, html: logo }, { w: 392, html: `<div style="padding:10px 0;">${id}</div>` }], 'middle') +
       fluid([{ w: aW, html: aW ? '&nbsp;' : '' }, { w: W - aW, html: b }]);
   } else {
     html = `<div style="${S.t(13, 20)}max-width:${aW + bW}px;">` + fluid([{ w: aW, html: a }, { w: bW, html: b }]);
