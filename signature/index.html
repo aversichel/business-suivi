@@ -293,8 +293,7 @@ const DEFAULT_STATE = {
     Object.assign({}, EMPTY_PROFILE, {
       label: 'Charlotte & Camille', name: 'Charlotte & Camille', title: 'Assistantes de choc ⚡',
       photo: 'assistantes.png', phone1Label: 'Charlotte', phone1: '06 58 04 21 46',
-      phone2Label: 'Camille', phone2: '06 49 50 51 24',
-      website: 'www.avpatrimoine.fr', email: 'charlotte@avpatrimoine.fr', logoInline: true, divider: false, showLegal: false
+      phone2Label: 'Camille', phone2: '06 49 50 51 24', logoInline: true, divider: false, showLegal: false
     })
   ],
   active: 0,
@@ -302,7 +301,7 @@ const DEFAULT_STATE = {
   screen: 'desktop',
   phoneImages: true,
   layoutV3: true,
-  assistantsContactV4: true
+  assistantsContactV5: true
 };
 
 let state = loadState();
@@ -336,13 +335,14 @@ function loadState() {
     s.profiles.forEach(p => { if (p.photo === 'assistantes.png') { p.logoInline = true; p.divider = false; } });
     s.layoutV3 = true;
   }
-  if (!s.assistantsContactV4) {
+  // L'e-mail et le site ajoutés un temps à Charlotte & Camille sont retirés.
+  if (!s.assistantsContactV5) {
     s.profiles.forEach(p => {
       if (p.photo !== 'assistantes.png') return;
-      if (!p.email) p.email = 'charlotte@avpatrimoine.fr';
-      if (!p.website) p.website = 'www.avpatrimoine.fr';
+      if (p.email === 'charlotte@avpatrimoine.fr') p.email = '';
+      if (p.website === 'www.avpatrimoine.fr') p.website = '';
     });
-    s.assistantsContactV4 = true;
+    s.assistantsContactV5 = true;
   }
   return s;
 }
@@ -457,12 +457,10 @@ function buildDesktop(p, c, pv) {
   const SEP = `<table ${TABLE} width="100%"><tr><td style="border-top:1px solid #d1d5db;font-size:1px;line-height:1px;padding:0 0 10px;">&nbsp;</td></tr></table>`;
 
   if (p.phone2 && !p.address) {
-    // Signature à deux (Charlotte & Camille) : e-mail et site en haut,
+    // Signature à deux (Charlotte & Camille) : e-mail et site éventuels,
     // un trait, puis le numéro de chacune.
-    if (p.email || p.website) {
-      b += fluid([{ w: 270, html: p.email ? mailRow() : '' }, { w: 200, html: p.website ? webRow() : '' }]);
-      b += SEP;
-    }
+    if (p.email || p.website) b += fluid([{ w: 270, html: p.email ? mailRow() : '' }, { w: 200, html: p.website ? webRow() : '' }]);
+    b += SEP;
     b += fluid([{ w: 270, html: p.phone1 ? phoneRow(p.phone1Label, p.phone1) : '' }, { w: 200, html: phoneRow(p.phone2Label, p.phone2) }]);
   } else {
     const left = [], right = [];
@@ -569,7 +567,7 @@ function buildPhone(p, c, withImages, pv) {
   if (p.email) line(ico('icon-mail.png') + `<a href="mailto:${esc(p.email)}" style="${S.link}">${esc(p.email)}</a>`);
   if (p.website) line(ico('icon-web.png') + `<a href="${esc(webHref(p.website))}" style="${S.link}">${esc(prettyUrl(p.website))}</a>`);
   if (duo) {
-    if (p.email || p.website) out.push(`<div style="border-top:1px solid #d1d5db;font-size:1px;line-height:1px;margin:6px 0;">&nbsp;</div>`);
+    out.push(`<div style="border-top:1px solid #d1d5db;font-size:1px;line-height:1px;margin:6px 0;">&nbsp;</div>`);
     phones();
   }
   if (p.address) line(ico('icon-home.png') + `<span style="color:#6b7280;">${esc(p.address)}</span>`);
