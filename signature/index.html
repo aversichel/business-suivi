@@ -33,7 +33,7 @@
   /* Sur téléphone : aperçu et bouton « Copier » d'abord, formulaire ensuite */
   main > .sticky { order: -1; }
   @media (min-width: 900px) {
-    main { grid-template-columns: 340px minmax(0, 1fr); align-items: start; }
+    main { grid-template-columns: 330px minmax(0, 1fr); align-items: start; }
     main > .sticky { order: 0; position: sticky; top: 12px; }
   }
   .card {
@@ -85,7 +85,7 @@
     margin: 0 auto; background: #fff; border: 1px solid var(--border); border-radius: 12px;
     overflow: hidden; transition: max-width .2s ease;
   }
-  .mail.desktop { max-width: 840px; }
+  .mail.desktop { max-width: 860px; }
   .mail.phone { max-width: 375px; }
   .mail-head { padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--muted); }
   .mail-body { padding: 16px 14px 20px; font-family: Calibri, Arial, sans-serif; font-size: 15px; color: #222; overflow-x: auto; }
@@ -473,11 +473,16 @@ function buildDesktop(p, c, pv) {
     // de la photo : le nom et la suite passent dessous, sur toute la largeur.
     // Outlook Windows (qui ignore float) reçoit un tableau équivalent via [if mso].
     const logoImg = `<img src="${img(c.logo, pv)}" width="88" height="42" alt="${esc(c.company)}" style="display:block;border:0;width:88px;height:42px;">`;
-    const photoImg = extra => `<img src="${img(p.photo, pv)}" width="${PHOTO}" height="${PHOTO}" alt="${esc(p.name)}"${extra || ''} style="display:block;border:0;width:${PHOTO}px;height:${PHOTO}px;${extra ? 'float:left;margin:0 16px 10px 0;' : ''}">`;
+    // Photo centrée en hauteur sur le bloc de droite (≈ 40 px plus bas).
+    // Sur ordinateur, le bloc fait ~610 px de large : calc() donne ~40 px.
+    // Sur téléphone (~345 px), il donne ~0 : la photo reste alignée avec le
+    // logo posé à côté d'elle. Sans calc(), on garde PHOTO_TOP (0).
+    const PHOTO_TOP = 0;
+    const photoImg = extra => `<img src="${img(p.photo, pv)}" width="${PHOTO}" height="${PHOTO}" alt="${esc(p.name)}"${extra || ''} style="display:block;border:0;width:${PHOTO}px;height:${PHOTO}px;${extra ? `float:left;margin:${PHOTO_TOP}px 16px 10px 0;margin-top:calc((100% - 345px) / 6.6);` : ''}">`;
     const W = (p.photo ? PHOTO + 16 : 0) + RW + 4;
     html = `<div style="max-width:${W}px;">` +
       `<!--[if mso]><table ${TABLE}><tr>` +
-      (p.photo ? `<td width="${PHOTO + 16}" valign="top" style="vertical-align:top;padding:0 16px 0 0;">${photoImg()}</td>` : '') +
+      (p.photo ? `<td width="${PHOTO + 16}" valign="middle" style="vertical-align:middle;padding:0 16px 0 0;">${photoImg()}</td>` : '') +
       `<td width="${RW}" valign="top" style="vertical-align:top;">` +
       `<table ${TABLE}><tr><td width="108" valign="middle" style="vertical-align:middle;">${logoImg}</td><td valign="middle" style="vertical-align:middle;">${id}</td></tr></table>` +
       `<div style="font-size:12px;line-height:12px;">&nbsp;</div>${msoOnly(b)}</td>` +
@@ -498,9 +503,9 @@ function buildDesktop(p, c, pv) {
       ? `<div style="${S.t(9, 13, '#6b7280', `padding:12px ${pr}px 0 0;`)}">${title ? `<b>${esc(title)} :</b><br>` : ''}${lines(text)}</div>` : '';
     // Colonnes assez larges pour que chaque ligne tienne sans retour à la
     // ligne sur ordinateur ; sur écran étroit, elles passent l'une sous l'autre.
-    html += fluid([{ w: 395, html: block(c.legalLeftTitle, c.legalLeft, 10) }, { w: 381, html: block(c.legalRightTitle, c.legalRight, 0) }]);
+    html += fluid([{ w: 413, html: block(c.legalLeftTitle, c.legalLeft, 28) }, { w: 381, html: block(c.legalRightTitle, c.legalRight, 0) }]);
   }
-  return `<div style="${S.t(13, 20)}max-width:776px;">` + html + `</div>`;
+  return `<div style="${S.t(13, 20)}max-width:794px;">` + html + `</div>`;
 }
 
 // Version téléphone : uniquement des blocs simples empilés, sans tableau,
