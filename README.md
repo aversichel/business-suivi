@@ -25,8 +25,7 @@ Pour mettre à jour l'app après l'installation, supprime et réinstalle depuis 
 
 `signature/index.html` : générateur de signature e-mail AV Patrimoine pour Outlook (ordinateur et Android), avec un profil Antoine et un profil Charlotte & Camille. La signature est responsive : colonnes côte à côte sur ordinateur, empilées sur téléphone.
 
-1. Active GitHub Pages sur le dépôt (Settings → Pages → branche principale).
-2. Ouvre `https://aversichel.github.io/business-suivi/signature/`.
-3. Choisis le profil et la version (ordinateur / téléphone), puis **Copier la signature** et colle-la dans les paramètres de signature d'Outlook.
+- Version en ligne (artefact claude.ai, à partager avec Charlotte et Camille) : https://claude.ai/artifact/MrJhSEJKBKxZKyndvmcJku
+- Les images des signatures sont hébergées sur `https://avpatrimoine.fr/assets/partage/` (mêmes noms de fichiers que `signature/img/`, qui sert à l'aperçu).
 
-Photos, logo et icônes sont dans `signature/img/` et doivent être en ligne pour s'afficher chez les destinataires.
+Choisis le profil et la version (ordinateur / téléphone), puis **Copier la signature** et colle-la dans les paramètres de signature d'Outlook.

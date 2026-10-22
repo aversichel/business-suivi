@@ -2,19 +2,49 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#111827">
-<title>Signature mail</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23111827' width='192' height='192'/><text x='96' y='120' font-size='80' fill='white' text-anchor='middle' dominant-baseline='middle'>✍️</text></svg>">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Signature AV Patrimoine</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#2f4a1d">
 <style>
+  /* Outil sobre aux couleurs du cabinet : formulaire à gauche, aperçu du mail à droite (empilés sur mobile). */
   :root {
-    --bg: #f8f7f4;
+    --bg: #f5f6f2;
     --card: #ffffff;
-    --text: #1f2937;
-    --muted: #6b7280;
-    --border: #e5e7eb;
-    --primary: #111827;
+    --field: #ffffff;
+    --text: #1d2318;
+    --muted: #646d5c;
+    --border: #e0e4d9;
+    --primary: #2f4a1d;
+    --on-primary: #ffffff;
+    --accent: #98c267;
+    --danger: #a52a1f;
+    --danger-border: #efc9c4;
+    --warn-fg: #7a4a06;
+    --warn-bg: #fbf0d9;
+    --code-bg: #eef0ea;
+    /* L'aperçu du mail reste blanc dans les deux thèmes : c'est le rendu réel de la signature. */
+    --paper: #ffffff;
+    --paper-ink: #222222;
+    --paper-muted: #6b7280;
+    --paper-line: #e5e7eb;
   }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #121510; --card: #1a1e17; --field: #20251d; --text: #e7eae2; --muted: #9ba393;
+      --border: #2d3428; --primary: #b5d68f; --on-primary: #16210c; --accent: #98c267;
+      --danger: #f08a7e; --danger-border: #5a2a24; --warn-fg: #f2c879; --warn-bg: #3a2c12; --code-bg: #262c22;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #121510; --card: #1a1e17; --field: #20251d; --text: #e7eae2; --muted: #9ba393;
+    --border: #2d3428; --primary: #b5d68f; --on-primary: #16210c; --accent: #98c267;
+    --danger: #f08a7e; --danger-border: #5a2a24; --warn-fg: #f2c879; --warn-bg: #3a2c12; --code-bg: #262c22;
+    color-scheme: dark;
+  }
+  :root[data-artifact] .no-artifact, :root:not([data-artifact]) .only-artifact { display: none !important; }
+  :root[data-artifact] #copyCode { grid-column: 1 / -1; }
   * { box-sizing: border-box; }
   body {
     margin: 0;
@@ -23,25 +53,31 @@
     color: var(--text);
     padding-bottom: 60px;
   }
-  header { padding: 20px 16px 8px; max-width: 1240px; margin: 0 auto; }
-  h1 { font-size: 20px; margin: 0 0 4px; font-weight: 700; }
-  header p { margin: 0; color: var(--muted); font-size: 14px; }
+  .wrap {
+    max-width: 1240px; margin: 0 auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  header { padding-block: 20px 8px; }
+  h1 { font-size: 20px; margin: 0 0 4px; font-weight: 700; text-wrap: balance; }
+  h1 span { color: var(--muted); font-weight: 500; }
+  header p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
   main {
-    max-width: 1240px; margin: 0 auto; padding: 8px 16px;
+    padding-block: 8px;
     display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr);
   }
   /* Sur téléphone : aperçu et bouton « Copier » d'abord, formulaire ensuite */
   main > .sticky { order: -1; }
   @media (min-width: 900px) {
     main { grid-template-columns: 330px minmax(0, 1fr); align-items: start; }
-    main > .sticky { order: 0; position: sticky; top: 12px; }
+    main > .sticky { order: 0; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); }
   }
   .card {
     background: var(--card); border: 1px solid var(--border);
-    border-radius: 12px; padding: 14px;
+    border-radius: 12px; padding: 14px; min-width: 0;
   }
   .card h2 {
-    font-size: 12px; text-transform: uppercase; letter-spacing: .04em;
+    font-size: 12px; text-transform: uppercase; letter-spacing: .06em;
     color: var(--muted); margin: 0 0 10px; font-weight: 700;
   }
   .card h2 small { text-transform: none; font-weight: 400; letter-spacing: 0; }
@@ -50,81 +86,84 @@
   label small { font-weight: 400; color: var(--muted); }
   input[type=text], input[type=url], input[type=email], input[type=tel], select, textarea {
     width: 100%; padding: 9px 10px; font-size: 15px; font-family: inherit;
-    border: 1px solid var(--border); border-radius: 8px; background: #fff; color: var(--text);
+    border: 1px solid var(--border); border-radius: 8px; background: var(--field); color: var(--text);
   }
   textarea { min-height: 70px; resize: vertical; font-size: 13px; }
-  input[type=color] { width: 100%; height: 40px; border: 1px solid var(--border); border-radius: 8px; padding: 2px; background: #fff; }
-  .row { display: grid; grid-template-columns: 2fr 3fr; gap: 8px; }
+  input[type=color] { width: 100%; height: 40px; border: 1px solid var(--border); border-radius: 8px; padding: 2px; background: var(--field); }
+  input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
   .check { display: flex; align-items: center; gap: 8px; font-weight: 500; margin-top: 12px; }
-  .check input { width: 18px; height: 18px; margin: 0; }
-  .group { font-size: 12px; font-weight: 700; color: var(--muted); margin: 18px 0 0; padding-top: 12px; border-top: 1px solid var(--border); }
+  .check input { width: 18px; height: 18px; margin: 0; accent-color: var(--primary); }
+  .group { font-size: 12px; font-weight: 700; color: var(--muted); margin: 18px 0 0; padding-top: 12px; border-top: 1px solid var(--border); letter-spacing: .03em; }
 
   .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
   .tab {
-    border: 1px solid var(--border); background: #fff; color: var(--text);
+    border: 1px solid var(--border); background: var(--field); color: var(--text);
     padding: 8px 12px; border-radius: 999px; font-size: 14px; font-weight: 600; cursor: pointer;
   }
-  .tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .tab.active { background: var(--primary); color: var(--on-primary); border-color: var(--primary); }
   .tab.add { color: var(--muted); font-weight: 500; }
-  .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: #fff; }
+  .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--field); }
   .seg button { border: 0; background: transparent; padding: 8px 12px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--muted); }
-  .seg button.active { background: var(--primary); color: #fff; }
+  .seg button.active { background: var(--primary); color: var(--on-primary); }
   .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 
   .btn {
     border: 0; border-radius: 10px; padding: 12px 14px; font-size: 15px; font-weight: 700;
-    cursor: pointer; background: var(--primary); color: #fff; width: 100%;
+    cursor: pointer; background: var(--primary); color: var(--on-primary); width: 100%;
   }
-  .btn.secondary { background: #fff; color: var(--text); border: 1px solid var(--border); font-weight: 600; }
-  .btn.danger { background: #fff; color: #b91c1c; border: 1px solid #fecaca; font-weight: 600; }
+  .btn.secondary { background: var(--field); color: var(--text); border: 1px solid var(--border); font-weight: 600; }
+  .btn.danger { background: var(--field); color: var(--danger); border: 1px solid var(--danger-border); font-weight: 600; }
   .btn:disabled { opacity: .4; cursor: default; }
   .actions { display: grid; gap: 8px; grid-template-columns: 1fr; margin-top: 12px; }
   @media (min-width: 520px) { .actions { grid-template-columns: 1fr 1fr; } .actions .wide { grid-column: 1 / -1; } }
 
   .mail {
-    margin: 0 auto; background: #fff; border: 1px solid var(--border); border-radius: 12px;
+    margin: 0 auto; background: var(--paper); color: var(--paper-ink);
+    border: 1px solid var(--border); border-radius: 12px;
     overflow: hidden; transition: max-width .2s ease;
   }
   .mail.desktop { max-width: 860px; }
   .mail.phone { max-width: 375px; }
-  .mail-head { padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--muted); }
-  .mail-body { padding: 16px 14px 20px; font-family: Calibri, Arial, sans-serif; font-size: 15px; color: #222; overflow-x: auto; }
+  .mail-head { padding: 10px 14px; border-bottom: 1px solid var(--paper-line); font-size: 13px; color: var(--paper-muted); }
+  .mail-body { padding: 16px 14px 20px; font-family: Calibri, Arial, sans-serif; font-size: 15px; color: var(--paper-ink); overflow-x: auto; }
   .mail-body p.msg { margin: 0 0 18px; line-height: 1.5; }
-  .note { font-size: 12px; color: var(--muted); margin-top: 10px; line-height: 1.5; word-break: break-all; }
-  .warn { font-size: 13px; color: #92400e; background: #fef3e2; border-radius: 8px; padding: 8px 10px; margin-top: 10px; line-height: 1.45; }
+  .note { font-size: 12px; color: var(--muted); margin: 10px 0 0; line-height: 1.5; overflow-wrap: anywhere; }
+  .warn { font-size: 13px; color: var(--warn-fg); background: var(--warn-bg); border-radius: 8px; padding: 8px 10px; margin-top: 10px; line-height: 1.45; }
   .warn:empty { display: none; }
   .toast {
-    position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%) translateY(90px);
-    background: var(--primary); color: #fff; padding: 10px 16px; border-radius: 10px; font-size: 14px;
+    position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%) translateY(120px);
+    background: var(--primary); color: var(--on-primary); padding: 10px 16px; border-radius: 10px; font-size: 14px;
     transition: transform .25s ease; z-index: 20; max-width: calc(100% - 32px); text-align: center;
   }
   .toast.show { transform: translateX(-50%) translateY(0); }
+  @media (prefers-reduced-motion: reduce) { .toast, .mail { transition: none; } }
 
   details { border-top: 1px solid var(--border); padding: 10px 0; }
   details:first-of-type { border-top: 0; }
   summary { font-weight: 700; cursor: pointer; font-size: 15px; }
   details ol, details ul { padding-left: 20px; margin: 8px 0 0; font-size: 14px; line-height: 1.55; }
   details p { font-size: 14px; line-height: 1.55; margin: 8px 0 0; }
-  code { background: #f3f4f6; padding: 1px 5px; border-radius: 4px; font-size: 13px; word-break: break-all; }
+  code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; font-size: 13px; overflow-wrap: anywhere; }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>✍️ Signature mail · AV Patrimoine</h1>
-  <p>Une signature qui s'adapte : côte à côte sur ordinateur, empilée sur téléphone. À coller dans Outlook.</p>
+<header class="wrap">
+  <h1>Signature mail <span>· AV Patrimoine</span></h1>
+  <p>Une signature qui s'adapte : côte à côte sur ordinateur, empilée sur téléphone. Choisis ton onglet, vérifie tes infos, puis copie-la dans Outlook.</p>
 </header>
 
-<main>
+<main class="wrap">
   <!-- Formulaire -->
   <section>
     <div class="card">
       <h2>Profil</h2>
       <div class="tabs" id="tabs"></div>
       <div id="profileForm"></div>
-      <div class="actions" style="grid-template-columns:1fr 1fr">
-        <button class="btn secondary" id="renameProfile">Renommer</button>
-        <button class="btn danger" id="deleteProfile">Supprimer</button>
+      <div class="actions">
+        <button class="btn danger wide" id="deleteProfile">Supprimer ce profil</button>
       </div>
     </div>
 
@@ -143,8 +182,8 @@
           <button data-v="phone">Version téléphone</button>
         </div>
         <div class="seg" id="screenSeg">
-          <button data-s="desktop">🖥️ Lu sur PC</button>
-          <button data-s="phone">📱 Lu sur mobile</button>
+          <button data-s="desktop">Lu sur PC</button>
+          <button data-s="phone">Lu sur mobile</button>
         </div>
       </div>
       <label class="check" id="phoneImagesWrap" style="margin:0 0 10px"><input type="checkbox" id="phoneImages"> Photo, logo et icônes dans la version téléphone</label>
@@ -157,76 +196,90 @@
         </div>
       </div>
       <div class="warn" id="imgWarn"></div>
+      <p class="note">Les images de la signature copiée sont chargées depuis <span id="imgBaseNote"></span></p>
 
       <div class="actions">
-        <button class="btn wide" id="copyRich">📋 Copier la signature</button>
+        <button class="btn wide" id="copyRich">Copier la signature</button>
         <button class="btn secondary" id="copyCode">Copier le code HTML</button>
-        <button class="btn secondary" id="download">Télécharger (.htm)</button>
-        <button class="btn secondary wide" id="shareLink">🔗 Copier un lien vers ce profil (téléphone / assistantes)</button>
+        <button class="btn secondary no-artifact" id="download">Télécharger (.htm)</button>
+        <button class="btn secondary wide no-artifact" id="shareLink">Copier un lien vers ce profil (téléphone / assistantes)</button>
       </div>
     </div>
 
     <div class="card">
       <h2>Mode d'emploi</h2>
       <details open>
-        <summary>📱 Outlook sur Android</summary>
+        <summary>Outlook sur Android</summary>
         <ol>
-          <li>Ouvre <b>cette page dans Chrome sur le téléphone</b> (bouton 🔗 ci-dessus pour t'envoyer le lien).</li>
-          <li>Choisis <b>Version téléphone</b>, puis <b>📋 Copier la signature</b>.</li>
-          <li>Dans Outlook : photo de profil → ⚙️ <b>Paramètres</b> → <b>Signature</b> (choisis le compte si besoin).</li>
+          <li class="only-artifact">Ouvre <b>ce lien sur ton téléphone</b> (dans l'appli Claude ou le navigateur) et choisis ton onglet.</li>
+          <li class="no-artifact">Ouvre <b>cette page dans Chrome sur le téléphone</b> (bouton « Copier un lien » ci-dessus pour te l'envoyer).</li>
+          <li>Choisis <b>Version téléphone</b>, puis <b>Copier la signature</b>.</li>
+          <li>Dans Outlook : photo de profil → <b>Paramètres</b> → <b>Signature</b> (choisis le compte si besoin).</li>
           <li>Efface l'ancienne signature, <b>appui long → Coller</b>, puis valide.</li>
         </ol>
-        <p>⚠️ Ne colle <b>jamais le code HTML</b> dans l'appli : elle ne l'interprète pas, c'est ce qui casse la mise en forme. Colle la signature « toute faite ».</p>
+        <p>Ne colle <b>jamais le code HTML</b> dans l'appli : elle ne l'interprète pas, c'est ce qui casse la mise en forme. Colle la signature « toute faite ».</p>
         <p>Si les images disparaissent ou s'affichent mal une fois collées, décoche « Photo, logo et icônes… » : il reste une version texte propre, avec couleurs et liens.</p>
       </details>
       <details>
-        <summary>🖥️ Outlook classique (Windows) — méthode la plus fiable</summary>
-        <ol>
+        <summary>Outlook classique (Windows) — méthode la plus fiable</summary>
+        <ol class="only-artifact">
+          <li>Choisis <b>Version ordinateur</b> puis <b>Copier le code HTML</b>.</li>
+          <li>Ouvre le <b>Bloc-notes</b>, colle, puis <b>Fichier → Enregistrer sous</b> : nom <code>Signature AVP.htm</code>, type « Tous les fichiers », encodage <b>UTF-8</b>.</li>
+          <li>Enregistre-le dans <code>%APPDATA%\Microsoft\Signatures</code> (tape ce chemin dans la barre d'adresse de la fenêtre).</li>
+          <li>Outlook : <b>Fichier</b> → <b>Options</b> → <b>Courrier</b> → <b>Signatures…</b> : la signature apparaît dans la liste. Choisis-la pour les nouveaux messages et les réponses.</li>
+        </ol>
+        <ol class="no-artifact">
           <li>Choisis <b>Version ordinateur</b> puis <b>Télécharger (.htm)</b>.</li>
           <li>Ouvre l'Explorateur de fichiers, tape <code>%APPDATA%\Microsoft\Signatures</code> dans la barre d'adresse, et dépose le fichier dedans.</li>
           <li>Outlook : <b>Fichier</b> → <b>Options</b> → <b>Courrier</b> → <b>Signatures…</b> : la signature apparaît dans la liste. Choisis-la pour les nouveaux messages et les réponses.</li>
         </ol>
-        <p>Avec cette méthode, Outlook garde la mise en page en colonnes. Un simple copier-coller marche aussi, mais Outlook peut alors empiler les blocs.</p>
+        <p>Avec cette méthode, Outlook garde la mise en page en colonnes. Un simple copier-coller de la signature marche aussi, mais Outlook peut alors empiler les blocs.</p>
       </details>
       <details>
-        <summary>🖥️ Nouvel Outlook / Outlook sur le web</summary>
+        <summary>Nouvel Outlook / Outlook sur le web</summary>
         <ol>
-          <li>Choisis <b>Version ordinateur</b> puis <b>📋 Copier la signature</b>.</li>
-          <li>⚙️ <b>Paramètres</b> → <b>Comptes</b> → <b>Signatures</b> → <b>Nouvelle signature</b>.</li>
+          <li>Choisis <b>Version ordinateur</b> puis <b>Copier la signature</b>.</li>
+          <li><b>Paramètres</b> → <b>Comptes</b> → <b>Signatures</b> → <b>Nouvelle signature</b>.</li>
           <li>Colle (<code>Ctrl+V</code>), nomme-la, enregistre, puis choisis-la par défaut.</li>
         </ol>
       </details>
       <details>
-        <summary>💡 Pourquoi elle est « responsive »</summary>
+        <summary>Modifier sa signature</summary>
+        <p>Choisis ton onglet en haut du formulaire et change ce que tu veux : nom, fonction, numéros, liens… L'aperçu se met à jour tout de suite. Le logo, la couleur et les mentions du cabinet sont communs à tous les onglets.</p>
+        <p>Tes modifications sont gardées <b>dans ton navigateur</b> : elles ne changent rien chez les autres. Sur un autre appareil, refais-les, ou copie ta signature depuis l'appareil où elle est à jour.</p>
+        <p>Besoin d'une signature pour une seule personne ? <b>+ Ajouter</b> crée un nouvel onglet.</p>
+      </details>
+      <details>
+        <summary>Pourquoi elle est « responsive »</summary>
         <ul>
-          <li>Les blocs (photo + logo, coordonnées, rdv / assistante, mentions) sont posés <b>côte à côte tant que la place le permet</b>, et passent <b>les uns sous les autres</b> sur un petit écran. Aucune zone ne déborde ni ne rétrécit en illisible.</li>
+          <li>Les blocs sont posés <b>côte à côte tant que la place le permet</b>, et passent <b>les uns sous les autres</b> sur un petit écran. Rien ne déborde ni ne rétrécit en illisible.</li>
           <li>Tout est en <b>vrai texte</b> (pas une grande image) : net sur tous les écrans, cliquable (appel, e-mail, rdv), lisible en mode sombre.</li>
-          <li>Photo, logo et icônes sont des PNG détourés, hébergés en ligne : ils restent propres sur fond blanc comme sur fond sombre.</li>
-          <li>Certains destinataires (Outlook pro notamment) bloquent les images jusqu'à ce qu'ils cliquent « Télécharger les images » : le texte, lui, reste toujours lisible.</li>
+          <li>Certains destinataires bloquent les images jusqu'à ce qu'ils cliquent « Télécharger les images » : le texte, lui, reste toujours lisible.</li>
         </ul>
       </details>
       <details>
-        <summary>👩‍💼 Signature de Charlotte & Camille</summary>
-        <p>Onglet <b>Charlotte & Camille</b> en haut : le logo, les couleurs et les mentions sont partagés, seules leurs infos changent. Envoie-leur le lien 🔗 : elles l'ouvrent sur leur ordinateur ou leur téléphone et copient la signature. Tu peux aussi créer un profil par assistante avec <b>+ Ajouter</b>.</p>
-      </details>
-      <details>
-        <summary>🖼️ Les images</summary>
-        <p>Les images sont dans le dossier <code>signature/img/</code> du dépôt. Elles doivent être accessibles en ligne (GitHub Pages activé sur le dépôt, ou copiées sur le site avpatrimoine.fr). Dans ce cas, indique l'adresse du dossier dans « Adresse des images ». Pour une meilleure photo, remplace <code>antoine.png</code> par une version carrée de 180 × 180 px.</p>
+        <summary>Les images</summary>
+        <p>Photos, logo et icônes sont hébergés sur <code>https://avpatrimoine.fr/assets/partage/</code>. Pour changer une photo, remplace le fichier sur le site <b>en gardant le même nom</b> (par exemple <code>antoine-portrait.png</code>) : toutes les signatures déjà installées se mettent à jour d'elles-mêmes.</p>
       </details>
     </div>
   </section>
 </main>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 const STORE_KEY = 'signature-mail-v2';
-const DEFAULT_IMG_BASE = 'https://aversichel.github.io/business-suivi/signature/img/';
+// Images hébergées sur le site du cabinet (mêmes noms que dans le dossier img/)
+const DEFAULT_IMG_BASE = 'https://avpatrimoine.fr/assets/partage/';
+const DUO_PHOTOS = ['assistantes.png', 'illustration-duo.png'];
+// Anciens noms de fichiers → noms en ligne sur avpatrimoine.fr
+const RENAMED = { 'antoine.png': 'antoine-portrait.png', 'assistantes.png': 'illustration-duo.png' };
 
 const PROFILE_SCHEMA = [
+  ['label', "Nom de l'onglet"],
   ['name', 'Nom affiché'],
   ['title', 'Fonction / accroche'],
-  ['photo', 'Photo', 'text', 'nom du fichier dans img/ ou URL https'],
+  ['photo', 'Photo', 'text', 'nom du fichier sur avpatrimoine.fr ou URL https'],
   ['group', 'Coordonnées'],
   ['address', 'Adresse'],
   ['phone1Label', 'Tél. 1 — prénom', 'text', 'facultatif'],
@@ -247,10 +300,10 @@ const PROFILE_SCHEMA = [
 
 const COMPANY_SCHEMA = [
   ['company', 'Nom du cabinet'],
-  ['logo', 'Logo', 'text', 'nom du fichier dans img/ ou URL https'],
+  ['logo', 'Logo', 'text', 'nom du fichier sur avpatrimoine.fr ou URL https'],
   ['colors'],
   ['font', 'Police', 'font'],
-  ['imgBase', 'Adresse des images', 'url', 'laisser vide = automatique'],
+  ['imgBase', 'Adresse des images', 'url', 'vide = https://avpatrimoine.fr/assets/partage/'],
   ['group', 'Mentions réglementaires'],
   ['legalLeftTitle', 'Bloc gauche — titre'],
   ['legalLeft', 'Bloc gauche — texte', 'textarea'],
@@ -285,14 +338,14 @@ const DEFAULT_STATE = {
   profiles: [
     Object.assign({}, EMPTY_PROFILE, {
       label: 'Antoine', name: 'Antoine Versichel', title: 'Formateur et Conseiller en gestion de patrimoine',
-      photo: 'antoine.png', address: '9, rue des Sables – 86140 Lencloître', phone1: '06 88 10 54 01',
+      photo: 'antoine-portrait.png', address: '9, rue des Sables – 86140 Lencloître', phone1: '06 88 10 54 01',
       website: 'www.avpatrimoine.fr', email: 'antoine@avpatrimoine.fr', booking: 'https://www.avpatrimoine.fr',
       assistantIntro: 'Mon assistante,', assistantName: 'Charlotte', assistantEmail: 'charlotte@avpatrimoine.fr',
       showLegal: true
     }),
     Object.assign({}, EMPTY_PROFILE, {
       label: 'Charlotte & Camille', name: 'Charlotte & Camille', title: 'Assistantes de choc ⚡',
-      photo: 'assistantes.png', phone1Label: 'Charlotte', phone1: '06 58 04 21 46',
+      photo: 'illustration-duo.png', phone1Label: 'Charlotte', phone1: '06 58 04 21 46',
       phone2Label: 'Camille', phone2: '06 49 50 51 24', logoInline: true, divider: false, showLegal: false
     })
   ],
@@ -328,17 +381,20 @@ function loadState() {
   s = Object.assign(clone(DEFAULT_STATE), s);
   s.company = Object.assign(clone(DEFAULT_STATE.company), s.company);
   s.profiles = s.profiles.map(p => Object.assign(clone(EMPTY_PROFILE), { logoInline: !p.divider }, p));
+  s.profiles.forEach(p => { if (RENAMED[p.photo]) p.photo = RENAMED[p.photo]; });
+  // L'ancienne adresse GitHub Pages n'est plus utilisée : on revient à avpatrimoine.fr
+  if (/github\.io/.test(s.company.imgBase || '')) s.company.imgBase = '';
   if (s.active >= s.profiles.length) s.active = 0;
   // Charlotte & Camille passent à la même mise en page qu'Antoine (une seule fois,
   // pour ne pas écraser un réglage fait ensuite à la main).
   if (!s.layoutV3) {
-    s.profiles.forEach(p => { if (p.photo === 'assistantes.png') { p.logoInline = true; p.divider = false; } });
+    s.profiles.forEach(p => { if (DUO_PHOTOS.includes(p.photo)) { p.logoInline = true; p.divider = false; } });
     s.layoutV3 = true;
   }
   // L'e-mail et le site ajoutés un temps à Charlotte & Camille sont retirés.
   if (!s.assistantsContactV5) {
     s.profiles.forEach(p => {
-      if (p.photo !== 'assistantes.png') return;
+      if (!DUO_PHOTOS.includes(p.photo)) return;
       if (p.email === 'charlotte@avpatrimoine.fr') p.email = '';
       if (p.website === 'www.avpatrimoine.fr') p.website = '';
     });
@@ -369,18 +425,17 @@ function darken(hex, f) {
 
 function imgBase() {
   const b = (state.company.imgBase || '').trim();
-  if (b) return b.endsWith('/') ? b : b + '/';
-  if (/^https?:$/.test(location.protocol)) return new URL('img/', location.href).href;
-  return DEFAULT_IMG_BASE;
+  if (!b) return DEFAULT_IMG_BASE;
+  return b.endsWith('/') ? b : b + '/';
 }
 
-// forPreview : en local (file://), l'aperçu lit les images du dossier img/
-// alors que la signature copiée pointe toujours vers l'adresse en ligne.
+// forPreview : l'aperçu lit la copie locale du dossier img/ (un artefact ne
+// peut pas charger d'images d'un autre site), alors que la signature copiée
+// pointe toujours vers l'adresse en ligne.
 function img(name, forPreview) {
   if (!name) return '';
   if (/^https?:\/\//i.test(name)) return name;
-  if (forPreview && location.protocol === 'file:' && !state.company.imgBase) return 'img/' + name;
-  return imgBase() + name;
+  return (forPreview ? 'img/' : imgBase()) + name;
 }
 
 /* ---------- Génération de la signature ---------- */
@@ -451,9 +506,9 @@ function buildDesktop(p, c, pv) {
   if (p.title) id += `<div style="${S.t(14, 20, '#374151', 'padding:2px 0 0;')}">${esc(p.title)}</div>`;
   let b = inline ? '' : id + `<div style="font-size:12px;line-height:12px;">&nbsp;</div>`;
 
-  const webRow = () => iconRow('icon-web.png', `<a href="${esc(webHref(p.website))}" style="${S.link}">${esc(prettyUrl(p.website))}</a>`, S, 18, pv);
-  const mailRow = () => iconRow('icon-mail.png', `<a href="mailto:${esc(p.email)}" style="${S.link}">${esc(p.email)}</a>`, S, 18, pv);
-  const phoneRow = (label, n) => iconRow('icon-phone.png', phoneInner(label, n, S), S, 18, pv);
+  const webRow = () => iconRow('icone-ordinateur.png', `<a href="${esc(webHref(p.website))}" style="${S.link}">${esc(prettyUrl(p.website))}</a>`, S, 18, pv);
+  const mailRow = () => iconRow('icone-mail.png', `<a href="mailto:${esc(p.email)}" style="${S.link}">${esc(p.email)}</a>`, S, 18, pv);
+  const phoneRow = (label, n) => iconRow('icone-telephone.png', phoneInner(label, n, S), S, 18, pv);
   const SEP = `<table ${TABLE} width="100%"><tr><td style="border-top:1px solid #d1d5db;font-size:1px;line-height:1px;padding:0 0 10px;">&nbsp;</td></tr></table>`;
 
   if (p.phone2 && !p.address) {
@@ -464,7 +519,7 @@ function buildDesktop(p, c, pv) {
     b += fluid([{ w: 270, html: p.phone1 ? phoneRow(p.phone1Label, p.phone1) : '' }, { w: 200, html: phoneRow(p.phone2Label, p.phone2) }]);
   } else {
     const left = [], right = [];
-    if (p.address) left.push(iconRow('icon-home.png', esc(p.address), S, 18, pv));
+    if (p.address) left.push(iconRow('icone-maison.png', esc(p.address), S, 18, pv));
     if (p.phone1) left.push(phoneRow(p.phone1Label, p.phone1));
     if (p.phone2) right.push(phoneRow(p.phone2Label, p.phone2));
     if (p.website) right.push(webRow());
@@ -475,7 +530,7 @@ function buildDesktop(p, c, pv) {
   let rdv = '', asst = '';
   if (p.booking) {
     rdv = `<table ${TABLE}><tr>` +
-      `<td valign="middle" style="vertical-align:middle;padding:0 10px 0 0;"><a href="${esc(p.booking)}"><img src="${img('icon-calendar.png', pv)}" width="34" height="34" alt="" style="display:block;border:0;width:34px;height:34px;"></a></td>` +
+      `<td valign="middle" style="vertical-align:middle;padding:0 10px 0 0;"><a href="${esc(p.booking)}"><img src="${img('icone-calendrier.png', pv)}" width="34" height="34" alt="" style="display:block;border:0;width:34px;height:34px;"></a></td>` +
       `<td valign="middle" style="vertical-align:middle;${S.t(14, 18, S.accentText)}"><a href="${esc(p.booking)}" style="color:${S.accentText};text-decoration:none;font-weight:bold;">prendre rdv<br>en ligne</a></td>` +
       `</tr></table>`;
   }
@@ -483,7 +538,7 @@ function buildDesktop(p, c, pv) {
     asst = `<div style="${S.t(13, 19)}">${esc(p.assistantIntro)} <b>${esc(p.assistantName)}</b> :</div>`;
     if (p.assistantEmail) {
       asst += `<table ${TABLE}><tr>` +
-        `<td valign="middle" style="vertical-align:middle;padding:0 6px 0 0;"><img src="${img('icon-arrow.png', pv)}" width="18" height="18" alt="" style="display:block;border:0;width:18px;height:18px;"></td>` +
+        `<td valign="middle" style="vertical-align:middle;padding:0 6px 0 0;"><img src="${img('icone-fleche.png', pv)}" width="18" height="18" alt="" style="display:block;border:0;width:18px;height:18px;"></td>` +
         `<td valign="middle" style="vertical-align:middle;${S.t(13, 19)}"><i><a href="mailto:${esc(p.assistantEmail)}" style="${S.link}">${esc(p.assistantEmail)}</a></i></td>` +
         `</tr></table>`;
     }
@@ -559,19 +614,19 @@ function buildPhone(p, c, withImages, pv) {
   const line = html => out.push(`<div style="${S.t(13, 20)}">${html}</div>`);
   const tel = (label, n) => (label ? `<b>${esc(label)}</b> ` : '') + `<a href="${telHref(n)}" style="${S.link}">${esc(n)}</a>`;
   const phones = () => {
-    if (p.phone1) line(ico('icon-phone.png') + tel(p.phone1Label, p.phone1));
-    if (p.phone2) line(ico('icon-phone.png') + tel(p.phone2Label, p.phone2));
+    if (p.phone1) line(ico('icone-telephone.png') + tel(p.phone1Label, p.phone1));
+    if (p.phone2) line(ico('icone-telephone.png') + tel(p.phone2Label, p.phone2));
   };
   const duo = p.phone2 && !p.address;
   if (!duo) phones();
-  if (p.email) line(ico('icon-mail.png') + `<a href="mailto:${esc(p.email)}" style="${S.link}">${esc(p.email)}</a>`);
-  if (p.website) line(ico('icon-web.png') + `<a href="${esc(webHref(p.website))}" style="${S.link}">${esc(prettyUrl(p.website))}</a>`);
+  if (p.email) line(ico('icone-mail.png') + `<a href="mailto:${esc(p.email)}" style="${S.link}">${esc(p.email)}</a>`);
+  if (p.website) line(ico('icone-ordinateur.png') + `<a href="${esc(webHref(p.website))}" style="${S.link}">${esc(prettyUrl(p.website))}</a>`);
   if (duo) {
     out.push(`<div style="border-top:1px solid #d1d5db;font-size:1px;line-height:1px;margin:6px 0;">&nbsp;</div>`);
     phones();
   }
-  if (p.address) line(ico('icon-home.png') + `<span style="color:#6b7280;">${esc(p.address)}</span>`);
-  if (p.booking) out.push(`<div style="${S.t(13, 20, S.accentText, 'padding-top:6px;')}">${ico('icon-calendar.png')}<a href="${esc(p.booking)}" style="color:${S.accentText};text-decoration:none;font-weight:bold;">Prendre rdv en ligne</a></div>`);
+  if (p.address) line(ico('icone-maison.png') + `<span style="color:#6b7280;">${esc(p.address)}</span>`);
+  if (p.booking) out.push(`<div style="${S.t(13, 20, S.accentText, 'padding-top:6px;')}">${ico('icone-calendrier.png')}<a href="${esc(p.booking)}" style="color:${S.accentText};text-decoration:none;font-weight:bold;">Prendre rdv en ligne</a></div>`);
   if (p.assistantEmail || p.assistantName) {
     out.push(`<div style="${S.t(13, 20, '#1f2937', p.booking ? '' : 'padding-top:6px;')}">${esc(p.assistantIntro)} <b>${esc(p.assistantName)}</b>${p.assistantEmail ? ` : <i><a href="mailto:${esc(p.assistantEmail)}" style="${S.link}">${esc(p.assistantEmail)}</a></i>` : ''}</div>`);
   }
@@ -658,14 +713,13 @@ function renderTabs() {
   add.className = 'tab add';
   add.textContent = '+ Ajouter';
   add.onclick = () => {
-    const label = prompt('Nom du profil (ex : Charlotte)', '');
-    if (!label) return;
-    state.profiles.push(Object.assign(clone(EMPTY_PROFILE), { label, name: label, showLegal: false }));
+    state.profiles.push(Object.assign(clone(EMPTY_PROFILE), { label: 'Nouveau profil', showLegal: false }));
     state.active = state.profiles.length - 1;
     fillForm(); update();
   };
   tabs.appendChild(add);
   $('deleteProfile').disabled = state.profiles.length < 2;
+  resetDelete();
 }
 
 function setSeg(id, key, val) {
@@ -679,9 +733,8 @@ function update() {
   const base = imgBase();
   $('imgWarn').innerHTML = !/^https:\/\//.test(base)
     ? `L'adresse des images doit commencer par <b>https://</b>, sinon elles ne s'afficheront pas chez tes destinataires.`
-    : location.protocol === 'file:' && !state.company.imgBase
-      ? `Page ouverte en local : la signature copiée chargera ses images depuis <code>${esc(base)}</code>. Vérifie que ce lien est en ligne (GitHub Pages) avant de l'utiliser.`
-      : '';
+    : '';
+  $('imgBaseNote').textContent = base;
   saveState();
 }
 
@@ -689,7 +742,7 @@ document.addEventListener('input', e => {
   const el = e.target;
   if (!el.dataset || !el.dataset.scope) return;
   target(el.dataset.scope)[el.dataset.key] = el.type === 'checkbox' ? el.checked : el.value;
-  if (el.dataset.key === 'name' && el.dataset.scope === 'profile') renderTabs();
+  if (el.dataset.scope === 'profile' && (el.dataset.key === 'label' || el.dataset.key === 'name')) renderTabs();
   update();
 });
 document.addEventListener('change', e => {
@@ -712,18 +765,26 @@ $('screenSeg').addEventListener('click', e => {
 });
 $('phoneImages').addEventListener('change', e => { state.phoneImages = e.target.checked; update(); });
 
-$('renameProfile').onclick = () => {
-  const p = state.profiles[state.active];
-  const label = prompt('Nom du profil', p.label || '');
-  if (label) { p.label = label; renderTabs(); saveState(); }
-};
+// Suppression en deux clics : le premier demande confirmation sur le bouton même.
+function resetDelete() {
+  const b = $('deleteProfile');
+  b.dataset.armed = '';
+  b.textContent = 'Supprimer ce profil';
+}
 $('deleteProfile').onclick = () => {
   if (state.profiles.length < 2) return;
-  const p = state.profiles[state.active];
-  if (!confirm('Supprimer le profil « ' + (p.label || p.name) + ' » ?')) return;
+  const b = $('deleteProfile');
+  if (!b.dataset.armed) {
+    b.dataset.armed = '1';
+    b.textContent = 'Confirmer la suppression';
+    clearTimeout(resetDelete._t);
+    resetDelete._t = setTimeout(resetDelete, 4000);
+    return;
+  }
   state.profiles.splice(state.active, 1);
   state.active = 0;
   fillForm(); update();
+  toast('Profil supprimé');
 };
 
 function toast(msg) {
@@ -789,8 +850,7 @@ $('download').onclick = () => {
 $('shareLink').onclick = () => {
   const payload = { company: state.company, profile: state.profiles[state.active], variant: state.variant };
   const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
-  const base = /^https?:$/.test(location.protocol) ? location.origin + location.pathname : 'https://aversichel.github.io/business-suivi/signature/';
-  copyText(base + '#p=' + b64, 'Lien copié ✓ Envoie-le par SMS ou mail');
+  copyText(location.origin + location.pathname + '#p=' + b64, 'Lien copié ✓ Envoie-le par SMS ou mail');
 };
 
 renderForm('profileForm', PROFILE_SCHEMA, 'profile');
