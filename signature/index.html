@@ -475,7 +475,7 @@ function buildDesktop(p, c, pv) {
     const logoImg = `<img src="${img(c.logo, pv)}" width="88" height="42" alt="${esc(c.company)}" style="display:block;border:0;width:88px;height:42px;">`;
     const photoImg = extra => `<img src="${img(p.photo, pv)}" width="${PHOTO}" height="${PHOTO}" alt="${esc(p.name)}"${extra || ''} style="display:block;border:0;width:${PHOTO}px;height:${PHOTO}px;${extra ? 'float:left;margin:0 16px 10px 0;' : ''}">`;
     const W = (p.photo ? PHOTO + 16 : 0) + RW + 4;
-    html = `<div style="${S.t(13, 20)}max-width:${W}px;">` +
+    html = `<div style="max-width:${W}px;">` +
       `<!--[if mso]><table ${TABLE}><tr>` +
       (p.photo ? `<td width="${PHOTO + 16}" valign="top" style="vertical-align:top;padding:0 16px 0 0;">${photoImg()}</td>` : '') +
       `<td width="${RW}" valign="top" style="vertical-align:top;">` +
@@ -487,18 +487,20 @@ function buildDesktop(p, c, pv) {
       `<div style="display:inline-block;vertical-align:middle;width:108px;padding:14px 0;">${logoImg}</div>` +
       `<div style="display:inline-block;vertical-align:middle;width:100%;max-width:392px;">${id}</div>` +
       `<div style="overflow:hidden;padding-top:12px;">${b}</div>` +
-      `</div><div style="clear:both;font-size:0;line-height:0;">&nbsp;</div><!--<![endif]-->`;
+      `</div><div style="clear:both;font-size:0;line-height:0;">&nbsp;</div><!--<![endif]-->` +
+      `</div>`;
   } else {
-    html = `<div style="${S.t(13, 20)}max-width:${aW + bW}px;">` + fluid([{ w: aW, html: a }, { w: bW, html: b }]);
+    html = `<div style="max-width:${aW + bW}px;">` + fluid([{ w: aW, html: a }, { w: bW, html: b }]) + `</div>`;
   }
 
   if (p.showLegal && (c.legalLeft || c.legalRight)) {
     const block = (title, text) => text
       ? `<div style="${S.t(10, 14, '#6b7280', 'padding:12px 16px 0 0;')}">${title ? `<b>${esc(title)} :</b><br>` : ''}${lines(text)}</div>` : '';
-    const half = Math.floor((inline ? aW + RW : aW + bW) / 2);
-    html += fluid([{ w: half, html: block(c.legalLeftTitle, c.legalLeft) }, { w: half, html: block(c.legalRightTitle, c.legalRight) }]);
+    // Colonnes assez larges pour que chaque ligne tienne sans retour à la
+    // ligne sur ordinateur ; sur écran étroit, elles passent l'une sous l'autre.
+    html += fluid([{ w: 450, html: block(c.legalLeftTitle, c.legalLeft) }, { w: 430, html: block(c.legalRightTitle, c.legalRight) }]);
   }
-  return html + `</div>`;
+  return `<div style="${S.t(13, 20)}max-width:880px;">` + html + `</div>`;
 }
 
 // Version téléphone : uniquement des blocs simples empilés, sans tableau,
