@@ -473,16 +473,16 @@ function buildDesktop(p, c, pv) {
     // de la photo : le nom et la suite passent dessous, sur toute la largeur.
     // Outlook Windows (qui ignore float) reçoit un tableau équivalent via [if mso].
     const logoImg = `<img src="${img(c.logo, pv)}" width="88" height="42" alt="${esc(c.company)}" style="display:block;border:0;width:88px;height:42px;">`;
-    // Photo centrée en hauteur sur le bloc de droite (≈ 40 px plus bas).
-    // Sur ordinateur, le bloc fait ~610 px de large : calc() donne ~40 px.
+    // Photo descendue de ≈ 25 px : légèrement au-dessus du centre du bloc de droite.
+    // Sur ordinateur, le bloc fait ~610 px de large : calc() donne ~25 px.
     // Sur téléphone (~345 px), il donne ~0 : la photo reste alignée avec le
     // logo posé à côté d'elle. Sans calc(), on garde PHOTO_TOP (0).
     const PHOTO_TOP = 0;
-    const photoImg = extra => `<img src="${img(p.photo, pv)}" width="${PHOTO}" height="${PHOTO}" alt="${esc(p.name)}"${extra || ''} style="display:block;border:0;width:${PHOTO}px;height:${PHOTO}px;${extra ? `float:left;margin:${PHOTO_TOP}px 16px 10px 0;margin-top:calc((100% - 345px) / 6.6);` : ''}">`;
+    const photoImg = extra => `<img src="${img(p.photo, pv)}" width="${PHOTO}" height="${PHOTO}" alt="${esc(p.name)}"${extra || ''} style="display:block;border:0;width:${PHOTO}px;height:${PHOTO}px;${extra ? `float:left;margin:${PHOTO_TOP}px 16px 10px 0;margin-top:calc((100% - 345px) / 10.6);` : ''}">`;
     const W = (p.photo ? PHOTO + 16 : 0) + RW + 4;
     html = `<div style="max-width:${W}px;">` +
       `<!--[if mso]><table ${TABLE}><tr>` +
-      (p.photo ? `<td width="${PHOTO + 16}" valign="middle" style="vertical-align:middle;padding:0 16px 0 0;">${photoImg()}</td>` : '') +
+      (p.photo ? `<td width="${PHOTO + 16}" valign="top" style="vertical-align:top;padding:25px 16px 0 0;">${photoImg()}</td>` : '') +
       `<td width="${RW}" valign="top" style="vertical-align:top;">` +
       `<table ${TABLE}><tr><td width="108" valign="middle" style="vertical-align:middle;">${logoImg}</td><td valign="middle" style="vertical-align:middle;">${id}</td></tr></table>` +
       `<div style="font-size:12px;line-height:12px;">&nbsp;</div>${msoOnly(b)}</td>` +
