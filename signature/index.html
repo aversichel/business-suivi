@@ -451,15 +451,28 @@ function buildDesktop(p, c, pv) {
   if (p.title) id += `<div style="${S.t(14, 20, '#374151', 'padding:2px 0 0;')}">${esc(p.title)}</div>`;
   let b = inline ? '' : id + `<div style="font-size:12px;line-height:12px;">&nbsp;</div>`;
 
-  const left = [], right = [];
-  if (p.address) left.push(iconRow('icon-home.png', esc(p.address), S, 18, pv));
-  if (p.phone1) left.push(iconRow('icon-phone.png', phoneInner(p.phone1Label, p.phone1, S), S, 18, pv));
-  if (p.phone2) right.push(iconRow('icon-phone.png', phoneInner(p.phone2Label, p.phone2, S), S, 18, pv));
-  if (p.website) right.push(iconRow('icon-web.png', `<a href="${esc(webHref(p.website))}" style="${S.link}">${esc(prettyUrl(p.website))}</a>`, S, 18, pv));
-  // Sans adresse mais avec deux téléphones (Charlotte & Camille), l'e-mail
-  // passe à gauche pour équilibrer les deux colonnes.
-  if (p.email) (!p.address && p.phone2 ? left : right).push(iconRow('icon-mail.png', `<a href="mailto:${esc(p.email)}" style="${S.link}">${esc(p.email)}</a>`, S, 18, pv));
-  b += fluid([{ w: 270, html: left.join('') }, { w: 200, html: right.join('') }]);
+  const webRow = () => iconRow('icon-web.png', `<a href="${esc(webHref(p.website))}" style="${S.link}">${esc(prettyUrl(p.website))}</a>`, S, 18, pv);
+  const mailRow = () => iconRow('icon-mail.png', `<a href="mailto:${esc(p.email)}" style="${S.link}">${esc(p.email)}</a>`, S, 18, pv);
+  const phoneRow = (label, n) => iconRow('icon-phone.png', phoneInner(label, n, S), S, 18, pv);
+  const SEP = `<table ${TABLE} width="100%"><tr><td style="border-top:1px solid #d1d5db;font-size:1px;line-height:1px;padding:0 0 10px;">&nbsp;</td></tr></table>`;
+
+  if (p.phone2 && !p.address) {
+    // Signature à deux (Charlotte & Camille) : e-mail et site en haut,
+    // un trait, puis le numéro de chacune.
+    if (p.email || p.website) {
+      b += fluid([{ w: 270, html: p.email ? mailRow() : '' }, { w: 200, html: p.website ? webRow() : '' }]);
+      b += SEP;
+    }
+    b += fluid([{ w: 270, html: p.phone1 ? phoneRow(p.phone1Label, p.phone1) : '' }, { w: 200, html: phoneRow(p.phone2Label, p.phone2) }]);
+  } else {
+    const left = [], right = [];
+    if (p.address) left.push(iconRow('icon-home.png', esc(p.address), S, 18, pv));
+    if (p.phone1) left.push(phoneRow(p.phone1Label, p.phone1));
+    if (p.phone2) right.push(phoneRow(p.phone2Label, p.phone2));
+    if (p.website) right.push(webRow());
+    if (p.email) right.push(mailRow());
+    b += fluid([{ w: 270, html: left.join('') }, { w: 200, html: right.join('') }]);
+  }
 
   let rdv = '', asst = '';
   if (p.booking) {
@@ -478,7 +491,7 @@ function buildDesktop(p, c, pv) {
     }
   }
   if (rdv || asst) {
-    b += `<table ${TABLE} width="100%"><tr><td style="border-top:1px solid #d1d5db;font-size:1px;line-height:1px;padding:0 0 10px;">&nbsp;</td></tr></table>`;
+    b += SEP;
     b += fluid([{ w: 270, html: rdv ? `<div style="padding:0 0 8px;">${rdv}</div>` : '' }, { w: 200, html: asst ? `<div style="padding:0 0 8px;">${asst}</div>` : '' }]);
   }
   const bW = 470;
@@ -547,10 +560,18 @@ function buildPhone(p, c, withImages, pv) {
 
   const line = html => out.push(`<div style="${S.t(13, 20)}">${html}</div>`);
   const tel = (label, n) => (label ? `<b>${esc(label)}</b> ` : '') + `<a href="${telHref(n)}" style="${S.link}">${esc(n)}</a>`;
-  if (p.phone1) line(ico('icon-phone.png') + tel(p.phone1Label, p.phone1));
-  if (p.phone2) line(ico('icon-phone.png') + tel(p.phone2Label, p.phone2));
+  const phones = () => {
+    if (p.phone1) line(ico('icon-phone.png') + tel(p.phone1Label, p.phone1));
+    if (p.phone2) line(ico('icon-phone.png') + tel(p.phone2Label, p.phone2));
+  };
+  const duo = p.phone2 && !p.address;
+  if (!duo) phones();
   if (p.email) line(ico('icon-mail.png') + `<a href="mailto:${esc(p.email)}" style="${S.link}">${esc(p.email)}</a>`);
   if (p.website) line(ico('icon-web.png') + `<a href="${esc(webHref(p.website))}" style="${S.link}">${esc(prettyUrl(p.website))}</a>`);
+  if (duo) {
+    if (p.email || p.website) out.push(`<div style="border-top:1px solid #d1d5db;font-size:1px;line-height:1px;margin:6px 0;">&nbsp;</div>`);
+    phones();
+  }
   if (p.address) line(ico('icon-home.png') + `<span style="color:#6b7280;">${esc(p.address)}</span>`);
   if (p.booking) out.push(`<div style="${S.t(13, 20, S.accentText, 'padding-top:6px;')}">${ico('icon-calendar.png')}<a href="${esc(p.booking)}" style="color:${S.accentText};text-decoration:none;font-weight:bold;">Prendre rdv en ligne</a></div>`);
   if (p.assistantEmail || p.assistantName) {
