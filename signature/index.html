@@ -33,7 +33,7 @@
   /* Sur téléphone : aperçu et bouton « Copier » d'abord, formulaire ensuite */
   main > .sticky { order: -1; }
   @media (min-width: 900px) {
-    main { grid-template-columns: 360px minmax(0, 1fr); align-items: start; }
+    main { grid-template-columns: 340px minmax(0, 1fr); align-items: start; }
     main > .sticky { order: 0; position: sticky; top: 12px; }
   }
   .card {
@@ -85,7 +85,7 @@
     margin: 0 auto; background: #fff; border: 1px solid var(--border); border-radius: 12px;
     overflow: hidden; transition: max-width .2s ease;
   }
-  .mail.desktop { max-width: 760px; }
+  .mail.desktop { max-width: 840px; }
   .mail.phone { max-width: 375px; }
   .mail-head { padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--muted); }
   .mail-body { padding: 16px 14px 20px; font-family: Calibri, Arial, sans-serif; font-size: 15px; color: #222; overflow-x: auto; }
@@ -494,13 +494,13 @@ function buildDesktop(p, c, pv) {
   }
 
   if (p.showLegal && (c.legalLeft || c.legalRight)) {
-    const block = (title, text) => text
-      ? `<div style="${S.t(10, 14, '#6b7280', 'padding:12px 16px 0 0;')}">${title ? `<b>${esc(title)} :</b><br>` : ''}${lines(text)}</div>` : '';
+    const block = (title, text, pr) => text
+      ? `<div style="${S.t(9, 13, '#6b7280', `padding:12px ${pr}px 0 0;`)}">${title ? `<b>${esc(title)} :</b><br>` : ''}${lines(text)}</div>` : '';
     // Colonnes assez larges pour que chaque ligne tienne sans retour à la
     // ligne sur ordinateur ; sur écran étroit, elles passent l'une sous l'autre.
-    html += fluid([{ w: 450, html: block(c.legalLeftTitle, c.legalLeft) }, { w: 430, html: block(c.legalRightTitle, c.legalRight) }]);
+    html += fluid([{ w: 395, html: block(c.legalLeftTitle, c.legalLeft, 10) }, { w: 381, html: block(c.legalRightTitle, c.legalRight, 0) }]);
   }
-  return `<div style="${S.t(13, 20)}max-width:880px;">` + html + `</div>`;
+  return `<div style="${S.t(13, 20)}max-width:776px;">` + html + `</div>`;
 }
 
 // Version téléphone : uniquement des blocs simples empilés, sans tableau,
