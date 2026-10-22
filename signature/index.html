@@ -14,7 +14,6 @@
     --muted: #6b7280;
     --border: #e5e7eb;
     --primary: #111827;
-    --ok: #10b981;
   }
   * { box-sizing: border-box; }
   body {
@@ -24,19 +23,18 @@
     color: var(--text);
     padding-bottom: 60px;
   }
-  header { padding: 20px 16px 8px; max-width: 1100px; margin: 0 auto; }
+  header { padding: 20px 16px 8px; max-width: 1240px; margin: 0 auto; }
   h1 { font-size: 20px; margin: 0 0 4px; font-weight: 700; }
   header p { margin: 0; color: var(--muted); font-size: 14px; }
   main {
-    max-width: 1100px; margin: 0 auto; padding: 8px 16px;
-    display: grid; gap: 16px; grid-template-columns: 1fr;
+    max-width: 1240px; margin: 0 auto; padding: 8px 16px;
+    display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr);
   }
   /* Sur téléphone : aperçu et bouton « Copier » d'abord, formulaire ensuite */
   main > .sticky { order: -1; }
   @media (min-width: 900px) {
-    main { grid-template-columns: 400px 1fr; align-items: start; }
-    main > .sticky { order: 0; }
-    .sticky { position: sticky; top: 12px; }
+    main { grid-template-columns: 360px minmax(0, 1fr); align-items: start; }
+    main > .sticky { order: 0; position: sticky; top: 12px; }
   }
   .card {
     background: var(--card); border: 1px solid var(--border);
@@ -46,19 +44,20 @@
     font-size: 12px; text-transform: uppercase; letter-spacing: .04em;
     color: var(--muted); margin: 0 0 10px; font-weight: 700;
   }
+  .card h2 small { text-transform: none; font-weight: 400; letter-spacing: 0; }
   .card + .card { margin-top: 12px; }
   label { display: block; font-size: 13px; font-weight: 600; margin: 10px 0 4px; }
   label small { font-weight: 400; color: var(--muted); }
-  input[type=text], input[type=url], input[type=email], input[type=tel], input[type=number], select, textarea {
+  input[type=text], input[type=url], input[type=email], input[type=tel], select, textarea {
     width: 100%; padding: 9px 10px; font-size: 15px; font-family: inherit;
     border: 1px solid var(--border); border-radius: 8px; background: #fff; color: var(--text);
   }
-  textarea { min-height: 54px; resize: vertical; }
-  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .row > div > label { margin-top: 10px; }
+  textarea { min-height: 70px; resize: vertical; font-size: 13px; }
   input[type=color] { width: 100%; height: 40px; border: 1px solid var(--border); border-radius: 8px; padding: 2px; background: #fff; }
+  .row { display: grid; grid-template-columns: 2fr 3fr; gap: 8px; }
   .check { display: flex; align-items: center; gap: 8px; font-weight: 500; margin-top: 12px; }
-  .check input { width: 18px; height: 18px; }
+  .check input { width: 18px; height: 18px; margin: 0; }
+  .group { font-size: 12px; font-weight: 700; color: var(--muted); margin: 18px 0 0; padding-top: 12px; border-top: 1px solid var(--border); }
 
   .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
   .tab {
@@ -70,7 +69,7 @@
   .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: #fff; }
   .seg button { border: 0; background: transparent; padding: 8px 12px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--muted); }
   .seg button.active { background: var(--primary); color: #fff; }
-  .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 
   .btn {
     border: 0; border-radius: 10px; padding: 12px 14px; font-size: 15px; font-weight: 700;
@@ -78,22 +77,24 @@
   }
   .btn.secondary { background: #fff; color: var(--text); border: 1px solid var(--border); font-weight: 600; }
   .btn.danger { background: #fff; color: #b91c1c; border: 1px solid #fecaca; font-weight: 600; }
+  .btn:disabled { opacity: .4; cursor: default; }
   .actions { display: grid; gap: 8px; grid-template-columns: 1fr; margin-top: 12px; }
-  @media (min-width: 520px) { .actions { grid-template-columns: 1fr 1fr; } .actions .btn:first-child { grid-column: 1 / -1; } }
+  @media (min-width: 520px) { .actions { grid-template-columns: 1fr 1fr; } .actions .wide { grid-column: 1 / -1; } }
 
   .mail {
     margin: 0 auto; background: #fff; border: 1px solid var(--border); border-radius: 12px;
     overflow: hidden; transition: max-width .2s ease;
   }
-  .mail.desktop { max-width: 680px; }
-  .mail.phone { max-width: 360px; }
+  .mail.desktop { max-width: 760px; }
+  .mail.phone { max-width: 375px; }
   .mail-head { padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--muted); }
   .mail-body { padding: 16px 14px 20px; font-family: Calibri, Arial, sans-serif; font-size: 15px; color: #222; overflow-x: auto; }
   .mail-body p.msg { margin: 0 0 18px; line-height: 1.5; }
-  .warn { font-size: 13px; color: #92400e; background: #fef3e2; border-radius: 8px; padding: 8px 10px; margin-top: 10px; display: none; }
-  .warn.show { display: block; }
+  .note { font-size: 12px; color: var(--muted); margin-top: 10px; line-height: 1.5; word-break: break-all; }
+  .warn { font-size: 13px; color: #92400e; background: #fef3e2; border-radius: 8px; padding: 8px 10px; margin-top: 10px; line-height: 1.45; }
+  .warn:empty { display: none; }
   .toast {
-    position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%) translateY(80px);
+    position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%) translateY(90px);
     background: var(--primary); color: #fff; padding: 10px 16px; border-radius: 10px; font-size: 14px;
     transition: transform .25s ease; z-index: 20; max-width: calc(100% - 32px); text-align: center;
   }
@@ -104,14 +105,14 @@
   summary { font-weight: 700; cursor: pointer; font-size: 15px; }
   details ol, details ul { padding-left: 20px; margin: 8px 0 0; font-size: 14px; line-height: 1.55; }
   details p { font-size: 14px; line-height: 1.55; margin: 8px 0 0; }
-  code { background: #f3f4f6; padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+  code { background: #f3f4f6; padding: 1px 5px; border-radius: 4px; font-size: 13px; word-break: break-all; }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>✍️ Signature mail</h1>
-  <p>Une signature légère, lisible sur ordinateur comme sur téléphone, à coller dans Outlook.</p>
+  <h1>✍️ Signature mail · AV Patrimoine</h1>
+  <p>Une signature qui s'adapte : côte à côte sur ordinateur, empilée sur téléphone. À coller dans Outlook.</p>
 </header>
 
 <main>
@@ -120,22 +121,7 @@
     <div class="card">
       <h2>Profil</h2>
       <div class="tabs" id="tabs"></div>
-      <label>Prénom Nom</label>
-      <input type="text" id="p_name" data-scope="profile">
-      <label>Fonction</label>
-      <input type="text" id="p_title" data-scope="profile">
-      <label>Ligne complémentaire <small>(ex : « Assistante de Prénom Nom »)</small></label>
-      <input type="text" id="p_extra" data-scope="profile">
-      <div class="row">
-        <div><label>Mobile</label><input type="tel" id="p_mobile" data-scope="profile"></div>
-        <div><label>Fixe</label><input type="tel" id="p_phone" data-scope="profile"></div>
-      </div>
-      <label>E-mail</label>
-      <input type="email" id="p_email" data-scope="profile">
-      <label>Lien prise de RDV <small>(facultatif)</small></label>
-      <input type="url" id="p_booking" data-scope="profile" placeholder="https://...">
-      <label>Photo <small>(URL https, facultatif)</small></label>
-      <input type="url" id="p_photo" data-scope="profile" placeholder="https://...">
+      <div id="profileForm"></div>
       <div class="actions" style="grid-template-columns:1fr 1fr">
         <button class="btn secondary" id="renameProfile">Renommer</button>
         <button class="btn danger" id="deleteProfile">Supprimer</button>
@@ -143,32 +129,8 @@
     </div>
 
     <div class="card">
-      <h2>Entreprise <small style="text-transform:none;font-weight:400">(commun à tous les profils)</small></h2>
-      <label>Société</label>
-      <input type="text" id="c_company" data-scope="company">
-      <label>Adresse</label>
-      <input type="text" id="c_address" data-scope="company">
-      <label>Site web</label>
-      <input type="url" id="c_website" data-scope="company" placeholder="https://...">
-      <label>LinkedIn <small>(facultatif)</small></label>
-      <input type="url" id="c_linkedin" data-scope="company" placeholder="https://www.linkedin.com/...">
-      <label>Logo <small>(URL https d'une image PNG/JPG)</small></label>
-      <input type="url" id="c_logo" data-scope="company" placeholder="https://.../logo.png">
-      <div class="warn" id="logoWarn">Le logo doit être une adresse <b>https://</b> publique. Une image collée ou en pièce jointe ne s'affichera pas chez tous les destinataires.</div>
-      <div class="row">
-        <div><label>Largeur logo (px)</label><input type="number" id="c_logoWidth" data-scope="company" min="40" max="200" step="5"></div>
-        <div><label>Couleur</label><input type="color" id="c_accent" data-scope="company"></div>
-      </div>
-      <label>Police</label>
-      <select id="c_font" data-scope="company">
-        <option value="Arial, Helvetica, sans-serif">Arial (la plus sûre)</option>
-        <option value="Calibri, Arial, Helvetica, sans-serif">Calibri</option>
-        <option value="'Segoe UI', Arial, sans-serif">Segoe UI</option>
-        <option value="Verdana, Geneva, sans-serif">Verdana</option>
-        <option value="Georgia, 'Times New Roman', serif">Georgia</option>
-      </select>
-      <label>Mention en bas <small>(facultatif, petit texte gris)</small></label>
-      <textarea id="c_disclaimer" data-scope="company"></textarea>
+      <h2>Cabinet <small>(commun à tous les profils)</small></h2>
+      <div id="companyForm"></div>
     </div>
   </section>
 
@@ -177,29 +139,30 @@
     <div class="card">
       <div class="toolbar">
         <div class="seg" id="variantSeg">
-          <button data-v="desktop" class="active">Version ordinateur</button>
+          <button data-v="desktop">Version ordinateur</button>
           <button data-v="phone">Version téléphone</button>
         </div>
         <div class="seg" id="screenSeg">
-          <button data-s="desktop" class="active">🖥️ Lu sur PC</button>
+          <button data-s="desktop">🖥️ Lu sur PC</button>
           <button data-s="phone">📱 Lu sur mobile</button>
         </div>
       </div>
-      <label class="check" style="margin-top:0;margin-bottom:12px"><input type="checkbox" id="phoneLogo"> Logo dans la version téléphone</label>
+      <label class="check" id="phoneImagesWrap" style="margin:0 0 10px"><input type="checkbox" id="phoneImages"> Photo, logo et icônes dans la version téléphone</label>
 
-      <div class="mail desktop" id="mail">
+      <div class="mail" id="mail">
         <div class="mail-head">À : client@exemple.fr — Objet : Votre dossier</div>
         <div class="mail-body">
           <p class="msg">Bonjour,<br><br>Vous trouverez ci-joint les documents demandés.<br><br>Bien cordialement,</p>
           <div id="preview"></div>
         </div>
       </div>
+      <div class="warn" id="imgWarn"></div>
 
       <div class="actions">
-        <button class="btn" id="copyRich">📋 Copier la signature</button>
+        <button class="btn wide" id="copyRich">📋 Copier la signature</button>
         <button class="btn secondary" id="copyCode">Copier le code HTML</button>
         <button class="btn secondary" id="download">Télécharger (.htm)</button>
-        <button class="btn secondary" id="shareLink" style="grid-column:1/-1">🔗 Copier un lien vers ce profil (pour le téléphone / l'assistante)</button>
+        <button class="btn secondary wide" id="shareLink">🔗 Copier un lien vers ce profil (téléphone / assistantes)</button>
       </div>
     </div>
 
@@ -208,46 +171,47 @@
       <details open>
         <summary>📱 Outlook sur Android</summary>
         <ol>
-          <li>Ouvre <b>cette page dans Chrome sur le téléphone</b> (utilise le bouton 🔗 ci-dessus pour t'envoyer le lien).</li>
+          <li>Ouvre <b>cette page dans Chrome sur le téléphone</b> (bouton 🔗 ci-dessus pour t'envoyer le lien).</li>
           <li>Choisis <b>Version téléphone</b>, puis <b>📋 Copier la signature</b>.</li>
           <li>Dans Outlook : photo de profil → ⚙️ <b>Paramètres</b> → <b>Signature</b> (choisis le compte si besoin).</li>
           <li>Efface l'ancienne signature, <b>appui long → Coller</b>, puis valide.</li>
         </ol>
-        <p>⚠️ Ne colle <b>pas le code HTML</b> dans l'appli : elle ne l'interprète pas, c'est ce qui casse la mise en forme. Colle la signature « toute faite ».</p>
-        <p>Si le logo n'apparaît pas, décoche « Logo dans la version téléphone » : le texte, les couleurs et les liens restent.</p>
+        <p>⚠️ Ne colle <b>jamais le code HTML</b> dans l'appli : elle ne l'interprète pas, c'est ce qui casse la mise en forme. Colle la signature « toute faite ».</p>
+        <p>Si les images disparaissent ou s'affichent mal une fois collées, décoche « Photo, logo et icônes… » : il reste une version texte propre, avec couleurs et liens.</p>
       </details>
       <details>
-        <summary>🖥️ Outlook sur ordinateur (nouvel Outlook / Outlook web)</summary>
+        <summary>🖥️ Outlook classique (Windows) — méthode la plus fiable</summary>
+        <ol>
+          <li>Choisis <b>Version ordinateur</b> puis <b>Télécharger (.htm)</b>.</li>
+          <li>Ouvre l'Explorateur de fichiers, tape <code>%APPDATA%\Microsoft\Signatures</code> dans la barre d'adresse, et dépose le fichier dedans.</li>
+          <li>Outlook : <b>Fichier</b> → <b>Options</b> → <b>Courrier</b> → <b>Signatures…</b> : la signature apparaît dans la liste. Choisis-la pour les nouveaux messages et les réponses.</li>
+        </ol>
+        <p>Avec cette méthode, Outlook garde la mise en page en colonnes. Un simple copier-coller marche aussi, mais Outlook peut alors empiler les blocs.</p>
+      </details>
+      <details>
+        <summary>🖥️ Nouvel Outlook / Outlook sur le web</summary>
         <ol>
           <li>Choisis <b>Version ordinateur</b> puis <b>📋 Copier la signature</b>.</li>
-          <li>Outlook : ⚙️ <b>Paramètres</b> → <b>Comptes</b> → <b>Signatures</b> → <b>Nouvelle signature</b>.</li>
-          <li>Colle (<code>Ctrl+V</code>) dans la zone d'édition, nomme-la et enregistre. Choisis-la par défaut pour les nouveaux messages et les réponses.</li>
+          <li>⚙️ <b>Paramètres</b> → <b>Comptes</b> → <b>Signatures</b> → <b>Nouvelle signature</b>.</li>
+          <li>Colle (<code>Ctrl+V</code>), nomme-la, enregistre, puis choisis-la par défaut.</li>
         </ol>
       </details>
       <details>
-        <summary>🖥️ Outlook classique (Windows)</summary>
-        <ol>
-          <li><b>Fichier</b> → <b>Options</b> → <b>Courrier</b> → <b>Signatures…</b> → <b>Nouveau</b>.</li>
-          <li>Colle (<code>Ctrl+V</code>) la signature copiée ici, puis <b>OK</b>.</li>
-        </ol>
-        <p>Alternative : <b>Télécharger (.htm)</b>, puis place le fichier dans <code>%APPDATA%\Microsoft\Signatures</code> (tape ce chemin dans l'Explorateur). Il apparaîtra dans la liste des signatures.</p>
-      </details>
-      <details>
-        <summary>💡 Pourquoi c'est « responsive »</summary>
+        <summary>💡 Pourquoi elle est « responsive »</summary>
         <ul>
-          <li>Outlook ignore les media queries : au lieu d'adapter la mise en page, la signature est <b>conçue étroite</b> (≈ 340 px max) et tient donc sur n'importe quel écran.</li>
-          <li>Texte réel (pas une image) : net sur tous les écrans, lisible en mode sombre, cliquable.</li>
-          <li>Numéros en <code>tel:</code> et e-mail en <code>mailto:</code> : un tap suffit sur mobile.</li>
-          <li>Logo : PNG hébergé en https, avec un fond <b>blanc</b> (pas transparent) pour rester visible en mode sombre.</li>
+          <li>Les blocs (photo + logo, coordonnées, rdv / assistante, mentions) sont posés <b>côte à côte tant que la place le permet</b>, et passent <b>les uns sous les autres</b> sur un petit écran. Aucune zone ne déborde ni ne rétrécit en illisible.</li>
+          <li>Tout est en <b>vrai texte</b> (pas une grande image) : net sur tous les écrans, cliquable (appel, e-mail, rdv), lisible en mode sombre.</li>
+          <li>Photo, logo et icônes sont des PNG détourés, hébergés en ligne : ils restent propres sur fond blanc comme sur fond sombre.</li>
+          <li>Certains destinataires (Outlook pro notamment) bloquent les images jusqu'à ce qu'ils cliquent « Télécharger les images » : le texte, lui, reste toujours lisible.</li>
         </ul>
       </details>
       <details>
-        <summary>👩‍💼 Signature de l'assistante</summary>
-        <p>Onglet <b>Assistante</b> en haut : seuls ses infos perso changent, l'entreprise, le logo et les couleurs sont partagés. Remplis ses champs puis envoie-lui le lien 🔗 : elle ouvre le lien sur son ordinateur ou son téléphone et copie sa signature.</p>
+        <summary>👩‍💼 Signature de Charlotte & Camille</summary>
+        <p>Onglet <b>Charlotte & Camille</b> en haut : le logo, les couleurs et les mentions sont partagés, seules leurs infos changent. Envoie-leur le lien 🔗 : elles l'ouvrent sur leur ordinateur ou leur téléphone et copient la signature. Tu peux aussi créer un profil par assistante avec <b>+ Ajouter</b>.</p>
       </details>
       <details>
-        <summary>🖼️ Héberger le logo</summary>
-        <p>Dépose le logo dans le dossier <code>signature/img/</code> de ce dépôt. Avec GitHub Pages activé, il est accessible à une adresse du type <code>https://aversichel.github.io/business-suivi/signature/img/logo.png</code>. Le site web de l'entreprise fait aussi très bien l'affaire.</p>
+        <summary>🖼️ Les images</summary>
+        <p>Les images sont dans le dossier <code>signature/img/</code> du dépôt. Elles doivent être accessibles en ligne (GitHub Pages activé sur le dépôt, ou copiées sur le site avpatrimoine.fr). Dans ce cas, indique l'adresse du dossier dans « Adresse des images ». Pour une meilleure photo, remplace <code>antoine.png</code> par une version carrée de 180 × 180 px.</p>
       </details>
     </div>
   </section>
@@ -256,179 +220,350 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const STORE_KEY = 'signature-mail-v1';
+const STORE_KEY = 'signature-mail-v2';
+const DEFAULT_IMG_BASE = 'https://aversichel.github.io/business-suivi/signature/img/';
+
+const PROFILE_SCHEMA = [
+  ['name', 'Nom affiché'],
+  ['title', 'Fonction / accroche'],
+  ['photo', 'Photo', 'text', 'nom du fichier dans img/ ou URL https'],
+  ['group', 'Coordonnées'],
+  ['address', 'Adresse'],
+  ['phone1Label', 'Tél. 1 — prénom', 'text', 'facultatif'],
+  ['phone1', 'Tél. 1', 'tel'],
+  ['phone2Label', 'Tél. 2 — prénom', 'text', 'facultatif'],
+  ['phone2', 'Tél. 2', 'tel'],
+  ['website', 'Site web'],
+  ['email', 'E-mail', 'email'],
+  ['group', 'Bas de signature'],
+  ['booking', 'Lien « prendre rdv en ligne »', 'url', 'laisser vide pour masquer'],
+  ['assistantIntro', 'Assistante — texte', 'text', 'ex : Mon assistante,'],
+  ['assistantName', 'Assistante — prénom'],
+  ['assistantEmail', 'Assistante — e-mail', 'email'],
+  ['check', 'divider', 'Trait vertical entre la photo et le logo'],
+  ['check', 'showLegal', 'Afficher les mentions réglementaires']
+];
+
+const COMPANY_SCHEMA = [
+  ['company', 'Nom du cabinet'],
+  ['logo', 'Logo', 'text', 'nom du fichier dans img/ ou URL https'],
+  ['colors'],
+  ['font', 'Police', 'font'],
+  ['imgBase', 'Adresse des images', 'url', 'laisser vide = automatique'],
+  ['group', 'Mentions réglementaires'],
+  ['legalLeftTitle', 'Bloc gauche — titre'],
+  ['legalLeft', 'Bloc gauche — texte', 'textarea'],
+  ['legalRightTitle', 'Bloc droit — titre'],
+  ['legalRight', 'Bloc droit — texte', 'textarea']
+];
+
+const FONTS = [
+  ["'Segoe UI', Roboto, Arial, sans-serif", 'Segoe UI (comme l\'original)'],
+  ['Arial, Helvetica, sans-serif', 'Arial (la plus sûre)'],
+  ['Calibri, Arial, Helvetica, sans-serif', 'Calibri'],
+  ['Verdana, Geneva, sans-serif', 'Verdana']
+];
+
+const EMPTY_PROFILE = {
+  label: '', name: '', title: '', photo: '', address: '', phone1Label: '', phone1: '', phone2Label: '', phone2: '',
+  website: '', email: '', booking: '', assistantIntro: '', assistantName: '', assistantEmail: '', divider: false, showLegal: true
+};
 
 const DEFAULT_STATE = {
   company: {
-    company: 'Nom de la société',
-    address: '12 rue Exemple, 75000 Paris',
-    website: 'https://www.exemple.fr',
-    linkedin: '',
-    logo: '',
-    logoWidth: 80,
-    accent: '#1e3a5f',
-    font: 'Arial, Helvetica, sans-serif',
-    disclaimer: ''
+    company: 'AV Patrimoine',
+    logo: 'logo-avp.png',
+    accent: '#98c267',
+    font: FONTS[0][0],
+    imgBase: '',
+    legalLeftTitle: 'Réseaux',
+    legalLeft: "- Membre de la CNCEF / Association agréée par l'A.M.F. (Autorité des Marchés Financiers)\n- Membre de Inovéa / Réseau d'Auditeurs et de Consultants Patrimoniaux",
+    legalRightTitle: 'Habilitations',
+    legalRight: '- ORIAS : N° 14004440 // M.I.A. / M.I.O.B.S.P.\n- Conseiller en Investissements Financiers : N°D016665\n- Assurance RCP conforme au Code Monétaire et Financier et au Code des Assurances'
   },
   profiles: [
-    { label: 'Moi', name: 'Prénom Nom', title: 'Fonction', extra: '', mobile: '+33 6 00 00 00 00', phone: '', email: 'prenom.nom@exemple.fr', booking: '', photo: '' },
-    { label: 'Assistante', name: 'Prénom Nom', title: 'Assistante commerciale', extra: 'Assistante de Prénom Nom', mobile: '', phone: '+33 1 00 00 00 00', email: 'assistante@exemple.fr', booking: '', photo: '' }
+    Object.assign({}, EMPTY_PROFILE, {
+      label: 'Antoine', name: 'Antoine Versichel', title: 'Formateur et Conseiller en gestion de patrimoine',
+      photo: 'antoine.png', address: '9, rue des Sables – 86140 Lencloître', phone1: '06 88 10 54 01',
+      website: 'www.avpatrimoine.fr', email: 'antoine@avpatrimoine.fr', booking: 'https://www.avpatrimoine.fr',
+      assistantIntro: 'Mon assistante,', assistantName: 'Charlotte', assistantEmail: 'charlotte@avpatrimoine.fr',
+      showLegal: true
+    }),
+    Object.assign({}, EMPTY_PROFILE, {
+      label: 'Charlotte & Camille', name: 'Charlotte & Camille', title: 'Assistantes de choc ⚡',
+      photo: 'assistantes.png', phone1Label: 'Charlotte', phone1: '06 58 04 21 46',
+      phone2Label: 'Camille', phone2: '06 49 50 51 24', divider: true, showLegal: false
+    })
   ],
   active: 0,
   variant: 'desktop',
   screen: 'desktop',
-  phoneLogo: true
+  phoneImages: true
 };
 
 let state = loadState();
 
+function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
 function loadState() {
-  let s = null;
   const hash = location.hash.match(/^#p=(.+)$/);
   if (hash) {
     try {
       const shared = JSON.parse(decodeURIComponent(escape(atob(hash[1]))));
-      s = clone(DEFAULT_STATE);
+      const s = clone(DEFAULT_STATE);
       Object.assign(s.company, shared.company);
-      s.profiles = [Object.assign(clone(DEFAULT_STATE.profiles[0]), shared.profile)];
-      s.active = 0;
+      s.profiles = [Object.assign(clone(EMPTY_PROFILE), shared.profile)];
       if (shared.variant) s.variant = shared.variant;
+      s.screen = s.variant;
       history.replaceState(null, '', location.pathname);
       return s;
     } catch (e) {}
   }
-  try {
-    const raw = localStorage.getItem(STORE_KEY);
-    if (raw) s = JSON.parse(raw);
-  } catch (e) {}
+  let s = null;
+  try { s = JSON.parse(localStorage.getItem(STORE_KEY)); } catch (e) {}
   if (!s || !Array.isArray(s.profiles) || !s.profiles.length) return clone(DEFAULT_STATE);
+  s = Object.assign(clone(DEFAULT_STATE), s);
   s.company = Object.assign(clone(DEFAULT_STATE.company), s.company);
+  s.profiles = s.profiles.map(p => Object.assign(clone(EMPTY_PROFILE), p));
   if (s.active >= s.profiles.length) s.active = 0;
-  return Object.assign(clone(DEFAULT_STATE), s);
+  return s;
 }
 
 function saveState() {
   try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {}
 }
 
-function clone(o) { return JSON.parse(JSON.stringify(o)); }
+/* ---------- Outils ---------- */
 
 function esc(s) {
   return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
-
 function telHref(n) { return 'tel:' + String(n).replace(/[^\d+]/g, ''); }
+function webHref(u) { return /^https?:\/\//i.test(u) ? u : 'https://' + u; }
+function prettyUrl(u) { return String(u).replace(/^https?:\/\//i, '').replace(/\/$/, ''); }
+function lines(s) { return esc(s).replace(/\n/g, '<br>'); }
 
-function prettyUrl(u) { return String(u).replace(/^https?:\/\//, '').replace(/\/$/, ''); }
+function darken(hex, f) {
+  const n = parseInt(hex.slice(1), 16);
+  const c = [n >> 16, (n >> 8) & 255, n & 255].map(v => Math.round(v * (1 - f)));
+  return '#' + c.map(v => v.toString(16).padStart(2, '0')).join('');
+}
 
-function isHttpsUrl(u) { return /^https:\/\/\S+$/i.test(u || ''); }
+function imgBase() {
+  const b = (state.company.imgBase || '').trim();
+  if (b) return b.endsWith('/') ? b : b + '/';
+  if (/^https?:$/.test(location.protocol)) return new URL('img/', location.href).href;
+  return DEFAULT_IMG_BASE;
+}
+
+// forPreview : en local (file://), l'aperçu lit les images du dossier img/
+// alors que la signature copiée pointe toujours vers l'adresse en ligne.
+function img(name, forPreview) {
+  if (!name) return '';
+  if (/^https?:\/\//i.test(name)) return name;
+  if (forPreview && location.protocol === 'file:' && !state.company.imgBase) return 'img/' + name;
+  return imgBase() + name;
+}
 
 /* ---------- Génération de la signature ---------- */
 
-// Version ordinateur : tableau 2 colonnes, largeur totale ≈ 340 px,
-// tout en styles inline (seule chose qu'Outlook respecte partout).
-function buildDesktop(p, c) {
-  const font = c.font, accent = c.accent;
-  const txt = '#1f2937', muted = '#6b7280';
-  const cell = `font-family:${font};font-size:13px;line-height:19px;color:${txt};padding:0;`;
-  const link = `color:${txt};text-decoration:none;`;
-  const lab = `color:${accent};font-weight:bold;font-size:11px;`;
-  const rows = [];
-
-  rows.push(`<tr><td style="font-family:${font};font-size:16px;line-height:21px;font-weight:bold;color:${txt};padding:0;">${esc(p.name)}</td></tr>`);
-  if (p.title) rows.push(`<tr><td style="${cell}color:${accent};">${esc(p.title)}</td></tr>`);
-  if (p.extra) rows.push(`<tr><td style="${cell}color:${muted};font-style:italic;">${esc(p.extra)}</td></tr>`);
-  if (c.company) rows.push(`<tr><td style="${cell}font-weight:bold;padding-top:2px;">${esc(c.company)}</td></tr>`);
-  rows.push(`<tr><td style="padding:0;height:8px;line-height:8px;font-size:8px;">&nbsp;</td></tr>`);
-  if (p.mobile) rows.push(`<tr><td style="${cell}"><span style="${lab}">M&nbsp;</span> <a href="${telHref(p.mobile)}" style="${link}">${esc(p.mobile)}</a></td></tr>`);
-  if (p.phone) rows.push(`<tr><td style="${cell}"><span style="${lab}">T&nbsp;</span> <a href="${telHref(p.phone)}" style="${link}">${esc(p.phone)}</a></td></tr>`);
-  if (p.email) rows.push(`<tr><td style="${cell}"><span style="${lab}">E&nbsp;</span> <a href="mailto:${esc(p.email)}" style="${link}">${esc(p.email)}</a></td></tr>`);
-  if (c.website) rows.push(`<tr><td style="${cell}"><span style="${lab}">W&nbsp;</span> <a href="${esc(c.website)}" style="${link}">${esc(prettyUrl(c.website))}</a></td></tr>`);
-  if (c.address) rows.push(`<tr><td style="${cell}color:${muted};font-size:12px;">${esc(c.address)}</td></tr>`);
-  const extraLinks = linksLine(p, c, cell, accent);
-  if (extraLinks) rows.push(`<tr><td style="${cell}padding-top:6px;">${extraLinks}</td></tr>`);
-
-  const visual = p.photo && isHttpsUrl(p.photo) ? p.photo : (isHttpsUrl(c.logo) ? c.logo : '');
-  const w = Math.max(40, Math.min(200, parseInt(c.logoWidth, 10) || 80));
-  const radius = visual === p.photo ? 'border-radius:50%;' : '';
-  const left = visual
-    ? `<td valign="top" style="vertical-align:top;padding:0 14px 0 0;width:${w}px;"><img src="${esc(visual)}" width="${w}" alt="${esc(c.company)}" style="display:block;width:${w}px;max-width:${w}px;height:auto;border:0;${radius}"></td>`
-    : '';
-  const border = visual ? `border-left:2px solid ${accent};padding:0 0 0 14px;` : `border-left:2px solid ${accent};padding:0 0 0 12px;`;
-
-  let html =
-    `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;font-family:${font};">` +
-    `<tr>${left}<td valign="top" style="vertical-align:top;${border}">` +
-    `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;">${rows.join('')}</table>` +
-    `</td></tr>`;
-  if (c.disclaimer) {
-    html += `<tr><td colspan="${visual ? 2 : 1}" style="font-family:${font};font-size:10px;line-height:14px;color:#9ca3af;padding:12px 0 0;max-width:340px;">${esc(c.disclaimer).replace(/\n/g, '<br>')}</td></tr>`;
-  }
-  return html + `</table>`;
+function styles(c) {
+  const f = c.font;
+  return {
+    font: f,
+    accent: c.accent,
+    accentText: darken(c.accent, 0.28),
+    t: (size, lh, color, extra) => `font-family:${f};font-size:${size}px;line-height:${lh}px;color:${color || '#1f2937'};${extra || ''}`,
+    link: 'color:#1f2937;text-decoration:none;'
+  };
 }
 
-// Version téléphone : pas de tableau (l'éditeur de signature d'Outlook mobile
-// les déforme), uniquement des blocs simples empilés.
-function buildPhone(p, c, withLogo) {
-  const font = c.font, accent = c.accent;
-  const txt = '#1f2937', muted = '#6b7280';
-  const line = `font-family:${font};font-size:13px;line-height:19px;color:${txt};margin:0;`;
-  const link = `color:${txt};text-decoration:none;`;
-  const lab = `color:${accent};font-weight:bold;font-size:11px;`;
+const TABLE = 'cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;mso-table-lspace:0;mso-table-rspace:0;"';
+
+// Colonnes « fluides » : côte à côte si la place le permet, sinon empilées.
+// Outlook Windows ignore inline-block : les commentaires [if mso] lui
+// donnent un vrai tableau pour garder les colonnes.
+function fluid(cols) {
+  cols = cols.filter(c => c.html);
+  if (!cols.length) return '';
+  let s = `<!--[if mso]><table ${TABLE}><tr><![endif]-->`;
+  cols.forEach(c => {
+    s += `<!--[if mso]><td width="${c.w}" valign="top" style="vertical-align:top;"><![endif]-->` +
+      `<div style="display:inline-block;vertical-align:top;width:100%;max-width:${c.w}px;">${c.html}</div>` +
+      `<!--[if mso]></td><![endif]-->`;
+  });
+  return `<div style="font-size:0;line-height:0;">${s}<!--[if mso]></tr></table><![endif]--></div>`;
+}
+
+function iconRow(icon, inner, S, size, forPreview) {
+  size = size || 18;
+  return `<table ${TABLE}><tr>` +
+    `<td valign="top" width="${size + 8}" style="vertical-align:top;padding:1px 8px 6px 0;width:${size}px;"><img src="${img(icon, forPreview)}" width="${size}" height="${size}" alt="" style="display:block;border:0;width:${size}px;height:${size}px;"></td>` +
+    `<td valign="top" style="vertical-align:top;padding:0 12px 6px 0;${S.t(13, 20)}">${inner}</td>` +
+    `</tr></table>`;
+}
+
+function phoneInner(label, num, S) {
+  const a = `<a href="${telHref(num)}" style="${S.link}">${esc(num)}</a>`;
+  return label ? `<span style="font-weight:bold;">${esc(label)}</span><br>${a}` : a;
+}
+
+function buildDesktop(p, c, pv) {
+  const S = styles(c);
+  const PHOTO = 90, LOGO_W = 80, LOGO_H = 38;
+
+  // Bloc A : photo (+ trait) + logo
+  let a = `<table ${TABLE}><tr>`;
+  if (p.photo) a += `<td valign="middle" style="vertical-align:middle;padding:0 16px 12px 0;"><img src="${img(p.photo, pv)}" width="${PHOTO}" height="${PHOTO}" alt="${esc(p.name)}" style="display:block;border:0;width:${PHOTO}px;height:${PHOTO}px;"></td>`;
+  if (p.divider) a += `<td width="2" style="width:2px;background:#1f2937;font-size:0;line-height:0;padding:0;">&nbsp;</td><td width="16" style="width:16px;font-size:0;line-height:0;padding:0 0 12px;">&nbsp;</td>`;
+  if (c.logo) a += `<td valign="middle" style="vertical-align:middle;padding:0 16px 12px 0;"><img src="${img(c.logo, pv)}" width="${LOGO_W}" height="${LOGO_H}" alt="${esc(c.company)}" style="display:block;border:0;width:${LOGO_W}px;height:${LOGO_H}px;"></td>`;
+  a += `</tr></table>`;
+  const aW = (p.photo ? PHOTO + 16 : 0) + (p.divider ? 18 : 0) + (c.logo ? LOGO_W + 16 : 0);
+
+  // Bloc B : identité, coordonnées, rdv / assistante
+  let b = `<div style="${S.t(18, 24, '#111827')}"><b>${esc(p.name)}</b>` +
+    (c.company ? ` <span style="color:#9ca3af;">|</span> <i>${esc(c.company)}</i>` : '') + `</div>`;
+  if (p.title) b += `<div style="${S.t(14, 20, '#374151', 'padding:2px 0 12px;')}">${esc(p.title)}</div>`;
+
+  const left = [], right = [];
+  if (p.address) left.push(iconRow('icon-home.png', esc(p.address), S, 18, pv));
+  if (p.phone1) left.push(iconRow('icon-phone.png', phoneInner(p.phone1Label, p.phone1, S), S, 18, pv));
+  if (p.phone2) right.push(iconRow('icon-phone.png', phoneInner(p.phone2Label, p.phone2, S), S, 18, pv));
+  if (p.website) right.push(iconRow('icon-web.png', `<a href="${esc(webHref(p.website))}" style="${S.link}">${esc(prettyUrl(p.website))}</a>`, S, 18, pv));
+  if (p.email) right.push(iconRow('icon-mail.png', `<a href="mailto:${esc(p.email)}" style="${S.link}">${esc(p.email)}</a>`, S, 18, pv));
+  b += fluid([{ w: 270, html: left.join('') }, { w: 200, html: right.join('') }]);
+
+  let rdv = '', asst = '';
+  if (p.booking) {
+    rdv = `<table ${TABLE}><tr>` +
+      `<td valign="middle" style="vertical-align:middle;padding:0 10px 0 0;"><a href="${esc(p.booking)}"><img src="${img('icon-calendar.png', pv)}" width="34" height="34" alt="" style="display:block;border:0;width:34px;height:34px;"></a></td>` +
+      `<td valign="middle" style="vertical-align:middle;${S.t(14, 18, S.accentText)}"><a href="${esc(p.booking)}" style="color:${S.accentText};text-decoration:none;font-weight:bold;">prendre rdv<br>en ligne</a></td>` +
+      `</tr></table>`;
+  }
+  if (p.assistantEmail || p.assistantName) {
+    asst = `<div style="${S.t(13, 19)}">${esc(p.assistantIntro)} <b>${esc(p.assistantName)}</b> :</div>`;
+    if (p.assistantEmail) {
+      asst += `<table ${TABLE}><tr>` +
+        `<td valign="middle" style="vertical-align:middle;padding:0 6px 0 0;"><img src="${img('icon-arrow.png', pv)}" width="18" height="18" alt="" style="display:block;border:0;width:18px;height:18px;"></td>` +
+        `<td valign="middle" style="vertical-align:middle;${S.t(13, 19)}"><i><a href="mailto:${esc(p.assistantEmail)}" style="${S.link}">${esc(p.assistantEmail)}</a></i></td>` +
+        `</tr></table>`;
+    }
+  }
+  if (rdv || asst) {
+    b += `<table ${TABLE} width="100%"><tr><td style="border-top:1px solid #d1d5db;font-size:1px;line-height:1px;padding:0 0 10px;">&nbsp;</td></tr></table>`;
+    b += fluid([{ w: 270, html: rdv ? `<div style="padding:0 0 8px;">${rdv}</div>` : '' }, { w: 200, html: asst ? `<div style="padding:0 0 8px;">${asst}</div>` : '' }]);
+  }
+  const bW = 470;
+
+  let html = `<div style="${S.t(13, 20)}max-width:${aW + bW}px;">` + fluid([{ w: aW, html: a }, { w: bW, html: b }]);
+
+  if (p.showLegal && (c.legalLeft || c.legalRight)) {
+    const block = (title, text) => text
+      ? `<div style="${S.t(10, 14, '#6b7280', 'padding:12px 16px 0 0;')}">${title ? `<b>${esc(title)} :</b><br>` : ''}${lines(text)}</div>` : '';
+    const half = Math.floor((aW + bW) / 2);
+    html += fluid([{ w: half, html: block(c.legalLeftTitle, c.legalLeft) }, { w: half, html: block(c.legalRightTitle, c.legalRight) }]);
+  }
+  return html + `</div>`;
+}
+
+// Version téléphone : uniquement des blocs simples empilés, sans tableau,
+// car l'éditeur de signature d'Outlook mobile déforme les tableaux.
+function buildPhone(p, c, withImages, pv) {
+  const S = styles(c);
   const out = [];
+  const ico = name => withImages
+    ? `<img src="${img(name, pv)}" width="15" height="15" alt="" style="width:15px;height:15px;border:0;vertical-align:-3px;">&nbsp; ` : '';
 
-  if (withLogo && isHttpsUrl(c.logo)) {
-    const w = Math.max(40, Math.min(160, parseInt(c.logoWidth, 10) || 80));
-    out.push(`<div style="margin:0 0 8px;"><img src="${esc(c.logo)}" width="${w}" alt="${esc(c.company)}" style="display:block;width:${w}px;height:auto;border:0;"></div>`);
+  if (withImages && (p.photo || c.logo)) {
+    let h = '';
+    if (p.photo) h += `<img src="${img(p.photo, pv)}" width="60" height="60" alt="${esc(p.name)}" style="width:60px;height:60px;border:0;vertical-align:middle;">`;
+    if (p.photo && c.logo) h += `&nbsp;&nbsp;&nbsp;`;
+    if (c.logo) h += `<img src="${img(c.logo, pv)}" width="63" height="30" alt="${esc(c.company)}" style="width:63px;height:30px;border:0;vertical-align:middle;">`;
+    out.push(`<div style="margin:0 0 8px;">${h}</div>`);
   }
-  out.push(`<div style="font-family:${font};font-size:15px;line-height:20px;font-weight:bold;color:${txt};margin:0;">${esc(p.name)}</div>`);
-  const sub = [p.title, c.company].filter(Boolean).map(esc).join(' · ');
-  if (sub) out.push(`<div style="${line}color:${accent};">${sub}</div>`);
-  if (p.extra) out.push(`<div style="${line}color:${muted};font-style:italic;">${esc(p.extra)}</div>`);
-  out.push(`<div style="font-size:4px;line-height:4px;margin:0 0 6px;border-bottom:2px solid ${accent};width:32px;">&nbsp;</div>`);
-  if (p.mobile) out.push(`<div style="${line}"><span style="${lab}">M&nbsp;</span> <a href="${telHref(p.mobile)}" style="${link}">${esc(p.mobile)}</a></div>`);
-  if (p.phone) out.push(`<div style="${line}"><span style="${lab}">T&nbsp;</span> <a href="${telHref(p.phone)}" style="${link}">${esc(p.phone)}</a></div>`);
-  if (p.email) out.push(`<div style="${line}"><span style="${lab}">E&nbsp;</span> <a href="mailto:${esc(p.email)}" style="${link}">${esc(p.email)}</a></div>`);
-  if (c.website) out.push(`<div style="${line}"><span style="${lab}">W&nbsp;</span> <a href="${esc(c.website)}" style="${link}">${esc(prettyUrl(c.website))}</a></div>`);
-  const extraLinks = linksLine(p, c, line, accent);
-  if (extraLinks) out.push(`<div style="${line}margin-top:4px;">${extraLinks}</div>`);
-  if (c.disclaimer) out.push(`<div style="font-family:${font};font-size:10px;line-height:14px;color:#9ca3af;margin:10px 0 0;">${esc(c.disclaimer).replace(/\n/g, '<br>')}</div>`);
-  return `<div style="font-family:${font};color:${txt};">${out.join('')}</div>`;
-}
+  out.push(`<div style="${S.t(16, 22, '#111827')}"><b>${esc(p.name)}</b>${c.company ? ` <span style="color:#9ca3af;">|</span> <i>${esc(c.company)}</i>` : ''}</div>`);
+  if (p.title) out.push(`<div style="${S.t(13, 19, '#374151')}">${esc(p.title)}</div>`);
+  out.push(`<div style="width:40px;border-bottom:2px solid ${S.accent};font-size:1px;line-height:1px;margin:0 0 8px;padding-top:6px;">&nbsp;</div>`);
 
-function linksLine(p, c, base, accent) {
-  const links = [];
-  if (p.booking) links.push(`<a href="${esc(p.booking)}" style="color:${accent};font-weight:bold;text-decoration:none;">📅 Prendre rendez-vous</a>`);
-  if (c.linkedin) links.push(`<a href="${esc(c.linkedin)}" style="color:${accent};font-weight:bold;text-decoration:none;">LinkedIn</a>`);
-  return links.join(' &nbsp;·&nbsp; ');
+  const line = html => out.push(`<div style="${S.t(13, 20)}">${html}</div>`);
+  const tel = (label, n) => (label ? `<b>${esc(label)}</b> ` : '') + `<a href="${telHref(n)}" style="${S.link}">${esc(n)}</a>`;
+  if (p.phone1) line(ico('icon-phone.png') + tel(p.phone1Label, p.phone1));
+  if (p.phone2) line(ico('icon-phone.png') + tel(p.phone2Label, p.phone2));
+  if (p.email) line(ico('icon-mail.png') + `<a href="mailto:${esc(p.email)}" style="${S.link}">${esc(p.email)}</a>`);
+  if (p.website) line(ico('icon-web.png') + `<a href="${esc(webHref(p.website))}" style="${S.link}">${esc(prettyUrl(p.website))}</a>`);
+  if (p.address) line(ico('icon-home.png') + `<span style="color:#6b7280;">${esc(p.address)}</span>`);
+  if (p.booking) out.push(`<div style="${S.t(13, 20, S.accentText, 'padding-top:6px;')}">${ico('icon-calendar.png')}<a href="${esc(p.booking)}" style="color:${S.accentText};text-decoration:none;font-weight:bold;">Prendre rdv en ligne</a></div>`);
+  if (p.assistantEmail || p.assistantName) {
+    out.push(`<div style="${S.t(13, 20, '#1f2937', p.booking ? '' : 'padding-top:6px;')}">${esc(p.assistantIntro)} <b>${esc(p.assistantName)}</b>${p.assistantEmail ? ` : <i><a href="mailto:${esc(p.assistantEmail)}" style="${S.link}">${esc(p.assistantEmail)}</a></i>` : ''}</div>`);
+  }
+  if (p.showLegal) {
+    [[c.legalLeftTitle, c.legalLeft], [c.legalRightTitle, c.legalRight]].forEach(([t, txt]) => {
+      if (txt) out.push(`<div style="${S.t(10, 14, '#6b7280', 'padding-top:10px;')}">${t ? `<b>${esc(t)} :</b><br>` : ''}${lines(txt)}</div>`);
+    });
+  }
+  return `<div style="${S.t(13, 20)}">${out.join('')}</div>`;
 }
 
 function buildText(p, c) {
-  return [
-    p.name,
-    [p.title, c.company].filter(Boolean).join(' · '),
-    p.extra,
-    '',
-    p.mobile && 'M  ' + p.mobile,
-    p.phone && 'T  ' + p.phone,
-    p.email && 'E  ' + p.email,
-    c.website && 'W  ' + prettyUrl(c.website),
-    c.address,
-    p.booking && 'Rendez-vous : ' + p.booking,
-    c.disclaimer && '\n' + c.disclaimer
-  ].filter(v => v !== '' && v !== false && v != null).join('\n').replace(/\n{3,}/g, '\n\n');
+  const L = [p.name + (c.company ? ' | ' + c.company : ''), p.title, ''];
+  if (p.address) L.push(p.address);
+  if (p.phone1) L.push((p.phone1Label ? p.phone1Label + ' : ' : 'Tél. ') + p.phone1);
+  if (p.phone2) L.push((p.phone2Label ? p.phone2Label + ' : ' : 'Tél. ') + p.phone2);
+  if (p.website) L.push(prettyUrl(p.website));
+  if (p.email) L.push(p.email);
+  if (p.booking) L.push('Prendre rdv en ligne : ' + p.booking);
+  if (p.assistantName || p.assistantEmail) L.push(`${p.assistantIntro} ${p.assistantName} : ${p.assistantEmail}`.trim());
+  if (p.showLegal) {
+    if (c.legalLeft) L.push('', (c.legalLeftTitle ? c.legalLeftTitle + ' :\n' : '') + c.legalLeft);
+    if (c.legalRight) L.push('', (c.legalRightTitle ? c.legalRightTitle + ' :\n' : '') + c.legalRight);
+  }
+  return L.filter(v => v != null).join('\n').replace(/\n{3,}/g, '\n\n').trim();
 }
 
-function currentHtml() {
+function currentHtml(forPreview) {
   const p = state.profiles[state.active];
-  return state.variant === 'phone' ? buildPhone(p, state.company, state.phoneLogo) : buildDesktop(p, state.company);
+  return state.variant === 'phone'
+    ? buildPhone(p, state.company, state.phoneImages, forPreview)
+    : buildDesktop(p, state.company, forPreview);
 }
 
 /* ---------- Interface ---------- */
 
 const $ = id => document.getElementById(id);
-const PROFILE_FIELDS = ['name', 'title', 'extra', 'mobile', 'phone', 'email', 'booking', 'photo'];
-const COMPANY_FIELDS = ['company', 'address', 'website', 'linkedin', 'logo', 'logoWidth', 'accent', 'font', 'disclaimer'];
+
+function renderForm(container, schema, scope) {
+  const el = $(container);
+  el.innerHTML = '';
+  schema.forEach(([key, label, type, hint]) => {
+    if (key === 'group') {
+      el.insertAdjacentHTML('beforeend', `<div class="group">${esc(label)}</div>`);
+    } else if (key === 'check') {
+      el.insertAdjacentHTML('beforeend', `<label class="check"><input type="checkbox" data-scope="${scope}" data-key="${label}"> ${esc(type)}</label>`);
+    } else if (key === 'colors') {
+      el.insertAdjacentHTML('beforeend', `<label>Couleur principale</label><input type="color" data-scope="${scope}" data-key="accent">`);
+    } else if (type === 'textarea') {
+      el.insertAdjacentHTML('beforeend', `<label>${esc(label)}</label><textarea data-scope="${scope}" data-key="${key}"></textarea>`);
+    } else if (type === 'font') {
+      el.insertAdjacentHTML('beforeend', `<label>${esc(label)}</label><select data-scope="${scope}" data-key="${key}">` +
+        FONTS.map(([v, n]) => `<option value="${esc(v)}">${esc(n)}</option>`).join('') + `</select>`);
+    } else {
+      el.insertAdjacentHTML('beforeend', `<label>${esc(label)}${hint ? ` <small>(${esc(hint)})</small>` : ''}</label><input type="${type || 'text'}" data-scope="${scope}" data-key="${key}">`);
+    }
+  });
+}
+
+function target(scope) { return scope === 'profile' ? state.profiles[state.active] : state.company; }
+
+function fillForm() {
+  document.querySelectorAll('[data-scope]').forEach(el => {
+    const v = target(el.dataset.scope)[el.dataset.key];
+    if (el.type === 'checkbox') el.checked = !!v; else el.value = v ?? '';
+  });
+  $('phoneImages').checked = !!state.phoneImages;
+  setSeg('variantSeg', 'v', state.variant);
+  setSeg('screenSeg', 's', state.screen);
+  renderTabs();
+}
 
 function renderTabs() {
   const tabs = $('tabs');
@@ -444,9 +579,9 @@ function renderTabs() {
   add.className = 'tab add';
   add.textContent = '+ Ajouter';
   add.onclick = () => {
-    const label = prompt('Nom du profil (ex : Assistante 2)', 'Nouveau profil');
+    const label = prompt('Nom du profil (ex : Charlotte)', '');
     if (!label) return;
-    state.profiles.push(Object.assign(clone(DEFAULT_STATE.profiles[0]), { label, name: '', title: '', mobile: '', email: '' }));
+    state.profiles.push(Object.assign(clone(EMPTY_PROFILE), { label, name: label, showLegal: false }));
     state.active = state.profiles.length - 1;
     fillForm(); update();
   };
@@ -454,50 +589,49 @@ function renderTabs() {
   $('deleteProfile').disabled = state.profiles.length < 2;
 }
 
-function fillForm() {
-  const p = state.profiles[state.active];
-  PROFILE_FIELDS.forEach(f => { $('p_' + f).value = p[f] || ''; });
-  COMPANY_FIELDS.forEach(f => { $('c_' + f).value = state.company[f] ?? ''; });
-  $('phoneLogo').checked = !!state.phoneLogo;
-  setSeg('variantSeg', 'v', state.variant);
-  setSeg('screenSeg', 's', state.screen);
-  renderTabs();
-}
-
 function setSeg(id, key, val) {
   document.querySelectorAll('#' + id + ' button').forEach(b => b.classList.toggle('active', b.dataset[key] === val));
 }
 
 function update() {
-  $('preview').innerHTML = currentHtml();
+  $('preview').innerHTML = currentHtml(true);
   $('mail').className = 'mail ' + state.screen;
-  $('phoneLogo').parentElement.style.display = state.variant === 'phone' ? 'flex' : 'none';
-  $('logoWarn').classList.toggle('show', !!state.company.logo && !isHttpsUrl(state.company.logo));
+  $('phoneImagesWrap').style.display = state.variant === 'phone' ? 'flex' : 'none';
+  const base = imgBase();
+  $('imgWarn').innerHTML = !/^https:\/\//.test(base)
+    ? `L'adresse des images doit commencer par <b>https://</b>, sinon elles ne s'afficheront pas chez tes destinataires.`
+    : location.protocol === 'file:' && !state.company.imgBase
+      ? `Page ouverte en local : la signature copiée chargera ses images depuis <code>${esc(base)}</code>. Vérifie que ce lien est en ligne (GitHub Pages) avant de l'utiliser.`
+      : '';
   saveState();
 }
 
-document.querySelectorAll('[data-scope]').forEach(el => {
-  el.addEventListener('input', () => {
-    const key = el.id.slice(2);
-    if (el.dataset.scope === 'profile') state.profiles[state.active][key] = el.value;
-    else state.company[key] = el.value;
+document.addEventListener('input', e => {
+  const el = e.target;
+  if (!el.dataset || !el.dataset.scope) return;
+  target(el.dataset.scope)[el.dataset.key] = el.type === 'checkbox' ? el.checked : el.value;
+  if (el.dataset.key === 'name' && el.dataset.scope === 'profile') renderTabs();
+  update();
+});
+document.addEventListener('change', e => {
+  if (e.target.type === 'checkbox' && e.target.dataset.scope) {
+    target(e.target.dataset.scope)[e.target.dataset.key] = e.target.checked;
     update();
-  });
+  }
 });
 
 $('variantSeg').addEventListener('click', e => {
   if (!e.target.dataset.v) return;
   state.variant = e.target.dataset.v;
-  // On prévisualise naturellement la version téléphone sur un écran de téléphone
-  if (state.variant === 'phone') state.screen = 'phone';
-  fillForm(); update();
+  state.screen = state.variant;
+  setSeg('variantSeg', 'v', state.variant); setSeg('screenSeg', 's', state.screen); update();
 });
 $('screenSeg').addEventListener('click', e => {
   if (!e.target.dataset.s) return;
   state.screen = e.target.dataset.s;
   setSeg('screenSeg', 's', state.screen); update();
 });
-$('phoneLogo').addEventListener('change', e => { state.phoneLogo = e.target.checked; update(); });
+$('phoneImages').addEventListener('change', e => { state.phoneImages = e.target.checked; update(); });
 
 $('renameProfile').onclick = () => {
   const p = state.profiles[state.active];
@@ -524,7 +658,7 @@ function toast(msg) {
 // Copie « mise en forme » : c'est ce qu'il faut coller dans Outlook
 // (ordinateur comme téléphone), jamais le code brut.
 $('copyRich').onclick = async () => {
-  const html = currentHtml();
+  const html = currentHtml(false);
   const text = buildText(state.profiles[state.active], state.company);
   try {
     await navigator.clipboard.write([new ClipboardItem({
@@ -533,15 +667,20 @@ $('copyRich').onclick = async () => {
     })]);
     toast('Signature copiée ✓ Colle-la dans Outlook');
   } catch (e) {
-    const node = $('preview');
+    // Repli : copie de la signature affichée (avec les adresses d'images en ligne)
+    const tmp = document.createElement('div');
+    tmp.style.cssText = 'position:fixed;left:-9999px;top:0;background:#fff;';
+    tmp.innerHTML = html;
+    document.body.appendChild(tmp);
     const range = document.createRange();
-    range.selectNodeContents(node);
+    range.selectNodeContents(tmp);
     const sel = window.getSelection();
     sel.removeAllRanges();
     sel.addRange(range);
     let ok = false;
     try { ok = document.execCommand('copy'); } catch (err) {}
     sel.removeAllRanges();
+    tmp.remove();
     toast(ok ? 'Signature copiée ✓ Colle-la dans Outlook' : 'Copie impossible : sélectionne la signature et copie-la à la main');
   }
 };
@@ -556,14 +695,14 @@ async function copyText(text, msg) {
   }
 }
 
-$('copyCode').onclick = () => copyText(currentHtml(), 'Code HTML copié ✓');
+$('copyCode').onclick = () => copyText(currentHtml(false), 'Code HTML copié ✓');
 
 $('download').onclick = () => {
   const p = state.profiles[state.active];
-  const doc = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>${currentHtml()}</body></html>`;
+  const doc = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>${currentHtml(false)}</body></html>`;
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([doc], { type: 'text/html' }));
-  a.download = 'Signature ' + (p.label || p.name || '').replace(/[\\/:*?"<>|]/g, '') + '.htm';
+  a.download = (c => 'Signature ' + c)((p.label || p.name || '').replace(/[\\/:*?"<>|&]/g, '-')) + '.htm';
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 };
@@ -571,9 +710,12 @@ $('download').onclick = () => {
 $('shareLink').onclick = () => {
   const payload = { company: state.company, profile: state.profiles[state.active], variant: state.variant };
   const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
-  copyText(location.origin + location.pathname + '#p=' + b64, 'Lien copié ✓ Envoie-le-toi (ou à ton assistante)');
+  const base = /^https?:$/.test(location.protocol) ? location.origin + location.pathname : 'https://aversichel.github.io/business-suivi/signature/';
+  copyText(base + '#p=' + b64, 'Lien copié ✓ Envoie-le par SMS ou mail');
 };
 
+renderForm('profileForm', PROFILE_SCHEMA, 'profile');
+renderForm('companyForm', COMPANY_SCHEMA, 'company');
 fillForm();
 update();
 </script>

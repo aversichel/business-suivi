@@ -23,4 +23,10 @@ Pour mettre à jour l'app après l'installation, supprime et réinstalle depuis 
 
 ## Signature mail
 
-`signature/index.html` : générateur de signature e-mail pour Outlook (ordinateur et Android), avec plusieurs profils (moi, assistante…). Ouvre `https://<utilisateur>.github.io/business-suivi/signature/`, remplis les champs, puis **Copier la signature** et colle-la dans les paramètres de signature d'Outlook. Le logo se dépose dans `signature/img/`.
+`signature/index.html` : générateur de signature e-mail AV Patrimoine pour Outlook (ordinateur et Android), avec un profil Antoine et un profil Charlotte & Camille. La signature est responsive : colonnes côte à côte sur ordinateur, empilées sur téléphone.
+
+1. Active GitHub Pages sur le dépôt (Settings → Pages → branche principale).
+2. Ouvre `https://aversichel.github.io/business-suivi/signature/`.
+3. Choisis le profil et la version (ordinateur / téléphone), puis **Copier la signature** et colle-la dans les paramètres de signature d'Outlook.
+
+Photos, logo et icônes sont dans `signature/img/` et doivent être en ligne pour s'afficher chez les destinataires.
