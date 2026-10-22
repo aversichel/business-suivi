@@ -384,13 +384,14 @@ const TABLE = 'cellpadding="0" cellspacing="0" border="0" role="presentation" st
 // Colonnes « fluides » : côte à côte si la place le permet, sinon empilées.
 // Outlook Windows ignore inline-block : les commentaires [if mso] lui
 // donnent un vrai tableau pour garder les colonnes.
-function fluid(cols) {
+function fluid(cols, valign) {
+  const v = valign || 'top';
   cols = cols.filter(c => c.html);
   if (!cols.length) return '';
   let s = `<!--[if mso]><table ${TABLE}><tr><![endif]-->`;
   cols.forEach(c => {
-    s += `<!--[if mso]><td width="${c.w}" valign="top" style="vertical-align:top;"><![endif]-->` +
-      `<div style="display:inline-block;vertical-align:top;width:100%;max-width:${c.w}px;">${c.html}</div>` +
+    s += `<!--[if mso]><td width="${c.w}" valign="${v}" style="vertical-align:${v};"><![endif]-->` +
+      `<div style="display:inline-block;vertical-align:${v};width:100%;max-width:${c.w}px;">${c.html}</div>` +
       `<!--[if mso]></td><![endif]-->`;
   });
   return `<div style="font-size:0;line-height:0;">${s}<!--[if mso]></tr></table><![endif]--></div>`;
@@ -428,13 +429,7 @@ function buildDesktop(p, c, pv) {
   let id = `<div style="${S.t(18, 24, '#111827')}"><b>${esc(p.name)}</b>` +
     (c.company ? ` <span style="color:#9ca3af;">|</span> <i>${esc(c.company)}</i>` : '') + `</div>`;
   if (p.title) id += `<div style="${S.t(14, 20, '#374151', 'padding:2px 0 0;')}">${esc(p.title)}</div>`;
-  let b = inline
-    ? fluid([
-        { w: 108, html: `<div style="padding:0 0 8px;"><img src="${img(c.logo, pv)}" width="88" height="42" alt="${esc(c.company)}" style="display:block;border:0;width:88px;height:42px;"></div>` },
-        { w: 390, html: id }
-      ])
-    : id;
-  b += `<div style="font-size:12px;line-height:12px;">&nbsp;</div>`;
+  let b = inline ? '' : id + `<div style="font-size:12px;line-height:12px;">&nbsp;</div>`;
 
   const left = [], right = [];
   if (p.address) left.push(iconRow('icon-home.png', esc(p.address), S, 18, pv));
@@ -464,14 +459,25 @@ function buildDesktop(p, c, pv) {
     b += `<table ${TABLE} width="100%"><tr><td style="border-top:1px solid #d1d5db;font-size:1px;line-height:1px;padding:0 0 10px;">&nbsp;</td></tr></table>`;
     b += fluid([{ w: 270, html: rdv ? `<div style="padding:0 0 8px;">${rdv}</div>` : '' }, { w: 200, html: asst ? `<div style="padding:0 0 8px;">${asst}</div>` : '' }]);
   }
-  const bW = inline ? 500 : 470;
-
-  let html = `<div style="${S.t(13, 20)}max-width:${aW + bW}px;">` + fluid([{ w: aW, html: a }, { w: bW, html: b }]);
+  const bW = 470;
+  let html;
+  if (inline) {
+    // Ligne 1 : photo | logo | nom — sur mobile, photo et logo restent côte à côte
+    // et le nom passe dessous. Ligne 2 : coordonnées alignées sous le logo
+    // (la colonne vide de gauche disparaît d'elle-même sur mobile).
+    const logo = `<div style="padding:0 20px 12px 0;"><img src="${img(c.logo, pv)}" width="88" height="42" alt="${esc(c.company)}" style="display:block;border:0;width:88px;height:42px;"></div>`;
+    const W = aW + 108 + 392;
+    html = `<div style="${S.t(13, 20)}max-width:${W}px;">` +
+      fluid([{ w: aW, html: a }, { w: 108, html: logo }, { w: 392, html: `<div style="padding:0 0 12px;">${id}</div>` }], 'middle') +
+      fluid([{ w: aW, html: aW ? '&nbsp;' : '' }, { w: W - aW, html: b }]);
+  } else {
+    html = `<div style="${S.t(13, 20)}max-width:${aW + bW}px;">` + fluid([{ w: aW, html: a }, { w: bW, html: b }]);
+  }
 
   if (p.showLegal && (c.legalLeft || c.legalRight)) {
     const block = (title, text) => text
       ? `<div style="${S.t(10, 14, '#6b7280', 'padding:12px 16px 0 0;')}">${title ? `<b>${esc(title)} :</b><br>` : ''}${lines(text)}</div>` : '';
-    const half = Math.floor((aW + bW) / 2);
+    const half = Math.floor((inline ? aW + 500 : aW + bW) / 2);
     html += fluid([{ w: half, html: block(c.legalLeftTitle, c.legalLeft) }, { w: half, html: block(c.legalRightTitle, c.legalRight) }]);
   }
   return html + `</div>`;
