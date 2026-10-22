@@ -293,14 +293,16 @@ const DEFAULT_STATE = {
     Object.assign({}, EMPTY_PROFILE, {
       label: 'Charlotte & Camille', name: 'Charlotte & Camille', title: 'Assistantes de choc ⚡',
       photo: 'assistantes.png', phone1Label: 'Charlotte', phone1: '06 58 04 21 46',
-      phone2Label: 'Camille', phone2: '06 49 50 51 24', logoInline: true, divider: false, showLegal: false
+      phone2Label: 'Camille', phone2: '06 49 50 51 24',
+      website: 'www.avpatrimoine.fr', email: 'charlotte@avpatrimoine.fr', logoInline: true, divider: false, showLegal: false
     })
   ],
   active: 0,
   variant: 'desktop',
   screen: 'desktop',
   phoneImages: true,
-  layoutV3: true
+  layoutV3: true,
+  assistantsContactV4: true
 };
 
 let state = loadState();
@@ -333,6 +335,14 @@ function loadState() {
   if (!s.layoutV3) {
     s.profiles.forEach(p => { if (p.photo === 'assistantes.png') { p.logoInline = true; p.divider = false; } });
     s.layoutV3 = true;
+  }
+  if (!s.assistantsContactV4) {
+    s.profiles.forEach(p => {
+      if (p.photo !== 'assistantes.png') return;
+      if (!p.email) p.email = 'charlotte@avpatrimoine.fr';
+      if (!p.website) p.website = 'www.avpatrimoine.fr';
+    });
+    s.assistantsContactV4 = true;
   }
   return s;
 }
@@ -446,7 +456,9 @@ function buildDesktop(p, c, pv) {
   if (p.phone1) left.push(iconRow('icon-phone.png', phoneInner(p.phone1Label, p.phone1, S), S, 18, pv));
   if (p.phone2) right.push(iconRow('icon-phone.png', phoneInner(p.phone2Label, p.phone2, S), S, 18, pv));
   if (p.website) right.push(iconRow('icon-web.png', `<a href="${esc(webHref(p.website))}" style="${S.link}">${esc(prettyUrl(p.website))}</a>`, S, 18, pv));
-  if (p.email) right.push(iconRow('icon-mail.png', `<a href="mailto:${esc(p.email)}" style="${S.link}">${esc(p.email)}</a>`, S, 18, pv));
+  // Sans adresse mais avec deux téléphones (Charlotte & Camille), l'e-mail
+  // passe à gauche pour équilibrer les deux colonnes.
+  if (p.email) (!p.address && p.phone2 ? left : right).push(iconRow('icon-mail.png', `<a href="mailto:${esc(p.email)}" style="${S.link}">${esc(p.email)}</a>`, S, 18, pv));
   b += fluid([{ w: 270, html: left.join('') }, { w: 200, html: right.join('') }]);
 
   let rdv = '', asst = '';
