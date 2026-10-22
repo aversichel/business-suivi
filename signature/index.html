@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111827">
+<title>Signature mail</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23111827' width='192' height='192'/><text x='96' y='120' font-size='80' fill='white' text-anchor='middle' dominant-baseline='middle'>✍️</text></svg>">
+<style>
+  :root {
+    --bg: #f8f7f4;
+    --card: #ffffff;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --primary: #111827;
+    --ok: #10b981;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding-bottom: 60px;
+  }
+  header { padding: 20px 16px 8px; max-width: 1100px; margin: 0 auto; }
+  h1 { font-size: 20px; margin: 0 0 4px; font-weight: 700; }
+  header p { margin: 0; color: var(--muted); font-size: 14px; }
+  main {
+    max-width: 1100px; margin: 0 auto; padding: 8px 16px;
+    display: grid; gap: 16px; grid-template-columns: 1fr;
+  }
+  /* Sur téléphone : aperçu et bouton « Copier » d'abord, formulaire ensuite */
+  main > .sticky { order: -1; }
+  @media (min-width: 900px) {
+    main { grid-template-columns: 400px 1fr; align-items: start; }
+    main > .sticky { order: 0; }
+    .sticky { position: sticky; top: 12px; }
+  }
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px;
+  }
+  .card h2 {
+    font-size: 12px; text-transform: uppercase; letter-spacing: .04em;
+    color: var(--muted); margin: 0 0 10px; font-weight: 700;
+  }
+  .card + .card { margin-top: 12px; }
+  label { display: block; font-size: 13px; font-weight: 600; margin: 10px 0 4px; }
+  label small { font-weight: 400; color: var(--muted); }
+  input[type=text], input[type=url], input[type=email], input[type=tel], input[type=number], select, textarea {
+    width: 100%; padding: 9px 10px; font-size: 15px; font-family: inherit;
+    border: 1px solid var(--border); border-radius: 8px; background: #fff; color: var(--text);
+  }
+  textarea { min-height: 54px; resize: vertical; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .row > div > label { margin-top: 10px; }
+  input[type=color] { width: 100%; height: 40px; border: 1px solid var(--border); border-radius: 8px; padding: 2px; background: #fff; }
+  .check { display: flex; align-items: center; gap: 8px; font-weight: 500; margin-top: 12px; }
+  .check input { width: 18px; height: 18px; }
+
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
+  .tab {
+    border: 1px solid var(--border); background: #fff; color: var(--text);
+    padding: 8px 12px; border-radius: 999px; font-size: 14px; font-weight: 600; cursor: pointer;
+  }
+  .tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .tab.add { color: var(--muted); font-weight: 500; }
+  .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: #fff; }
+  .seg button { border: 0; background: transparent; padding: 8px 12px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--muted); }
+  .seg button.active { background: var(--primary); color: #fff; }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+
+  .btn {
+    border: 0; border-radius: 10px; padding: 12px 14px; font-size: 15px; font-weight: 700;
+    cursor: pointer; background: var(--primary); color: #fff; width: 100%;
+  }
+  .btn.secondary { background: #fff; color: var(--text); border: 1px solid var(--border); font-weight: 600; }
+  .btn.danger { background: #fff; color: #b91c1c; border: 1px solid #fecaca; font-weight: 600; }
+  .actions { display: grid; gap: 8px; grid-template-columns: 1fr; margin-top: 12px; }
+  @media (min-width: 520px) { .actions { grid-template-columns: 1fr 1fr; } .actions .btn:first-child { grid-column: 1 / -1; } }
+
+  .mail {
+    margin: 0 auto; background: #fff; border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; transition: max-width .2s ease;
+  }
+  .mail.desktop { max-width: 680px; }
+  .mail.phone { max-width: 360px; }
+  .mail-head { padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--muted); }
+  .mail-body { padding: 16px 14px 20px; font-family: Calibri, Arial, sans-serif; font-size: 15px; color: #222; overflow-x: auto; }
+  .mail-body p.msg { margin: 0 0 18px; line-height: 1.5; }
+  .warn { font-size: 13px; color: #92400e; background: #fef3e2; border-radius: 8px; padding: 8px 10px; margin-top: 10px; display: none; }
+  .warn.show { display: block; }
+  .toast {
+    position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%) translateY(80px);
+    background: var(--primary); color: #fff; padding: 10px 16px; border-radius: 10px; font-size: 14px;
+    transition: transform .25s ease; z-index: 20; max-width: calc(100% - 32px); text-align: center;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  details { border-top: 1px solid var(--border); padding: 10px 0; }
+  details:first-of-type { border-top: 0; }
+  summary { font-weight: 700; cursor: pointer; font-size: 15px; }
+  details ol, details ul { padding-left: 20px; margin: 8px 0 0; font-size: 14px; line-height: 1.55; }
+  details p { font-size: 14px; line-height: 1.55; margin: 8px 0 0; }
+  code { background: #f3f4f6; padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>✍️ Signature mail</h1>
+  <p>Une signature légère, lisible sur ordinateur comme sur téléphone, à coller dans Outlook.</p>
+</header>
+
+<main>
+  <!-- Formulaire -->
+  <section>
+    <div class="card">
+      <h2>Profil</h2>
+      <div class="tabs" id="tabs"></div>
+      <label>Prénom Nom</label>
+      <input type="text" id="p_name" data-scope="profile">
+      <label>Fonction</label>
+      <input type="text" id="p_title" data-scope="profile">
+      <label>Ligne complémentaire <small>(ex : « Assistante de Prénom Nom »)</small></label>
+      <input type="text" id="p_extra" data-scope="profile">
+      <div class="row">
+        <div><label>Mobile</label><input type="tel" id="p_mobile" data-scope="profile"></div>
+        <div><label>Fixe</label><input type="tel" id="p_phone" data-scope="profile"></div>
+      </div>
+      <label>E-mail</label>
+      <input type="email" id="p_email" data-scope="profile">
+      <label>Lien prise de RDV <small>(facultatif)</small></label>
+      <input type="url" id="p_booking" data-scope="profile" placeholder="https://...">
+      <label>Photo <small>(URL https, facultatif)</small></label>
+      <input type="url" id="p_photo" data-scope="profile" placeholder="https://...">
+      <div class="actions" style="grid-template-columns:1fr 1fr">
+        <button class="btn secondary" id="renameProfile">Renommer</button>
+        <button class="btn danger" id="deleteProfile">Supprimer</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Entreprise <small style="text-transform:none;font-weight:400">(commun à tous les profils)</small></h2>
+      <label>Société</label>
+      <input type="text" id="c_company" data-scope="company">
+      <label>Adresse</label>
+      <input type="text" id="c_address" data-scope="company">
+      <label>Site web</label>
+      <input type="url" id="c_website" data-scope="company" placeholder="https://...">
+      <label>LinkedIn <small>(facultatif)</small></label>
+      <input type="url" id="c_linkedin" data-scope="company" placeholder="https://www.linkedin.com/...">
+      <label>Logo <small>(URL https d'une image PNG/JPG)</small></label>
+      <input type="url" id="c_logo" data-scope="company" placeholder="https://.../logo.png">
+      <div class="warn" id="logoWarn">Le logo doit être une adresse <b>https://</b> publique. Une image collée ou en pièce jointe ne s'affichera pas chez tous les destinataires.</div>
+      <div class="row">
+        <div><label>Largeur logo (px)</label><input type="number" id="c_logoWidth" data-scope="company" min="40" max="200" step="5"></div>
+        <div><label>Couleur</label><input type="color" id="c_accent" data-scope="company"></div>
+      </div>
+      <label>Police</label>
+      <select id="c_font" data-scope="company">
+        <option value="Arial, Helvetica, sans-serif">Arial (la plus sûre)</option>
+        <option value="Calibri, Arial, Helvetica, sans-serif">Calibri</option>
+        <option value="'Segoe UI', Arial, sans-serif">Segoe UI</option>
+        <option value="Verdana, Geneva, sans-serif">Verdana</option>
+        <option value="Georgia, 'Times New Roman', serif">Georgia</option>
+      </select>
+      <label>Mention en bas <small>(facultatif, petit texte gris)</small></label>
+      <textarea id="c_disclaimer" data-scope="company"></textarea>
+    </div>
+  </section>
+
+  <!-- Aperçu + actions -->
+  <section class="sticky">
+    <div class="card">
+      <div class="toolbar">
+        <div class="seg" id="variantSeg">
+          <button data-v="desktop" class="active">Version ordinateur</button>
+          <button data-v="phone">Version téléphone</button>
+        </div>
+        <div class="seg" id="screenSeg">
+          <button data-s="desktop" class="active">🖥️ Lu sur PC</button>
+          <button data-s="phone">📱 Lu sur mobile</button>
+        </div>
+      </div>
+      <label class="check" style="margin-top:0;margin-bottom:12px"><input type="checkbox" id="phoneLogo"> Logo dans la version téléphone</label>
+
+      <div class="mail desktop" id="mail">
+        <div class="mail-head">À : client@exemple.fr — Objet : Votre dossier</div>
+        <div class="mail-body">
+          <p class="msg">Bonjour,<br><br>Vous trouverez ci-joint les documents demandés.<br><br>Bien cordialement,</p>
+          <div id="preview"></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="copyRich">📋 Copier la signature</button>
+        <button class="btn secondary" id="copyCode">Copier le code HTML</button>
+        <button class="btn secondary" id="download">Télécharger (.htm)</button>
+        <button class="btn secondary" id="shareLink" style="grid-column:1/-1">🔗 Copier un lien vers ce profil (pour le téléphone / l'assistante)</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Mode d'emploi</h2>
+      <details open>
+        <summary>📱 Outlook sur Android</summary>
+        <ol>
+          <li>Ouvre <b>cette page dans Chrome sur le téléphone</b> (utilise le bouton 🔗 ci-dessus pour t'envoyer le lien).</li>
+          <li>Choisis <b>Version téléphone</b>, puis <b>📋 Copier la signature</b>.</li>
+          <li>Dans Outlook : photo de profil → ⚙️ <b>Paramètres</b> → <b>Signature</b> (choisis le compte si besoin).</li>
+          <li>Efface l'ancienne signature, <b>appui long → Coller</b>, puis valide.</li>
+        </ol>
+        <p>⚠️ Ne colle <b>pas le code HTML</b> dans l'appli : elle ne l'interprète pas, c'est ce qui casse la mise en forme. Colle la signature « toute faite ».</p>
+        <p>Si le logo n'apparaît pas, décoche « Logo dans la version téléphone » : le texte, les couleurs et les liens restent.</p>
+      </details>
+      <details>
+        <summary>🖥️ Outlook sur ordinateur (nouvel Outlook / Outlook web)</summary>
+        <ol>
+          <li>Choisis <b>Version ordinateur</b> puis <b>📋 Copier la signature</b>.</li>
+          <li>Outlook : ⚙️ <b>Paramètres</b> → <b>Comptes</b> → <b>Signatures</b> → <b>Nouvelle signature</b>.</li>
+          <li>Colle (<code>Ctrl+V</code>) dans la zone d'édition, nomme-la et enregistre. Choisis-la par défaut pour les nouveaux messages et les réponses.</li>
+        </ol>
+      </details>
+      <details>
+        <summary>🖥️ Outlook classique (Windows)</summary>
+        <ol>
+          <li><b>Fichier</b> → <b>Options</b> → <b>Courrier</b> → <b>Signatures…</b> → <b>Nouveau</b>.</li>
+          <li>Colle (<code>Ctrl+V</code>) la signature copiée ici, puis <b>OK</b>.</li>
+        </ol>
+        <p>Alternative : <b>Télécharger (.htm)</b>, puis place le fichier dans <code>%APPDATA%\Microsoft\Signatures</code> (tape ce chemin dans l'Explorateur). Il apparaîtra dans la liste des signatures.</p>
+      </details>
+      <details>
+        <summary>💡 Pourquoi c'est « responsive »</summary>
+        <ul>
+          <li>Outlook ignore les media queries : au lieu d'adapter la mise en page, la signature est <b>conçue étroite</b> (≈ 340 px max) et tient donc sur n'importe quel écran.</li>
+          <li>Texte réel (pas une image) : net sur tous les écrans, lisible en mode sombre, cliquable.</li>
+          <li>Numéros en <code>tel:</code> et e-mail en <code>mailto:</code> : un tap suffit sur mobile.</li>
+          <li>Logo : PNG hébergé en https, avec un fond <b>blanc</b> (pas transparent) pour rester visible en mode sombre.</li>
+        </ul>
+      </details>
+      <details>
+        <summary>👩‍💼 Signature de l'assistante</summary>
+        <p>Onglet <b>Assistante</b> en haut : seuls ses infos perso changent, l'entreprise, le logo et les couleurs sont partagés. Remplis ses champs puis envoie-lui le lien 🔗 : elle ouvre le lien sur son ordinateur ou son téléphone et copie sa signature.</p>
+      </details>
+      <details>
+        <summary>🖼️ Héberger le logo</summary>
+        <p>Dépose le logo dans le dossier <code>signature/img/</code> de ce dépôt. Avec GitHub Pages activé, il est accessible à une adresse du type <code>https://aversichel.github.io/business-suivi/signature/img/logo.png</code>. Le site web de l'entreprise fait aussi très bien l'affaire.</p>
+      </details>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STORE_KEY = 'signature-mail-v1';
+
+const DEFAULT_STATE = {
+  company: {
+    company: 'Nom de la société',
+    address: '12 rue Exemple, 75000 Paris',
+    website: 'https://www.exemple.fr',
+    linkedin: '',
+    logo: '',
+    logoWidth: 80,
+    accent: '#1e3a5f',
+    font: 'Arial, Helvetica, sans-serif',
+    disclaimer: ''
+  },
+  profiles: [
+    { label: 'Moi', name: 'Prénom Nom', title: 'Fonction', extra: '', mobile: '+33 6 00 00 00 00', phone: '', email: 'prenom.nom@exemple.fr', booking: '', photo: '' },
+    { label: 'Assistante', name: 'Prénom Nom', title: 'Assistante commerciale', extra: 'Assistante de Prénom Nom', mobile: '', phone: '+33 1 00 00 00 00', email: 'assistante@exemple.fr', booking: '', photo: '' }
+  ],
+  active: 0,
+  variant: 'desktop',
+  screen: 'desktop',
+  phoneLogo: true
+};
+
+let state = loadState();
+
+function loadState() {
+  let s = null;
+  const hash = location.hash.match(/^#p=(.+)$/);
+  if (hash) {
+    try {
+      const shared = JSON.parse(decodeURIComponent(escape(atob(hash[1]))));
+      s = clone(DEFAULT_STATE);
+      Object.assign(s.company, shared.company);
+      s.profiles = [Object.assign(clone(DEFAULT_STATE.profiles[0]), shared.profile)];
+      s.active = 0;
+      if (shared.variant) s.variant = shared.variant;
+      history.replaceState(null, '', location.pathname);
+      return s;
+    } catch (e) {}
+  }
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) s = JSON.parse(raw);
+  } catch (e) {}
+  if (!s || !Array.isArray(s.profiles) || !s.profiles.length) return clone(DEFAULT_STATE);
+  s.company = Object.assign(clone(DEFAULT_STATE.company), s.company);
+  if (s.active >= s.profiles.length) s.active = 0;
+  return Object.assign(clone(DEFAULT_STATE), s);
+}
+
+function saveState() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {}
+}
+
+function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+function esc(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function telHref(n) { return 'tel:' + String(n).replace(/[^\d+]/g, ''); }
+
+function prettyUrl(u) { return String(u).replace(/^https?:\/\//, '').replace(/\/$/, ''); }
+
+function isHttpsUrl(u) { return /^https:\/\/\S+$/i.test(u || ''); }
+
+/* ---------- Génération de la signature ---------- */
+
+// Version ordinateur : tableau 2 colonnes, largeur totale ≈ 340 px,
+// tout en styles inline (seule chose qu'Outlook respecte partout).
+function buildDesktop(p, c) {
+  const font = c.font, accent = c.accent;
+  const txt = '#1f2937', muted = '#6b7280';
+  const cell = `font-family:${font};font-size:13px;line-height:19px;color:${txt};padding:0;`;
+  const link = `color:${txt};text-decoration:none;`;
+  const lab = `color:${accent};font-weight:bold;font-size:11px;`;
+  const rows = [];
+
+  rows.push(`<tr><td style="font-family:${font};font-size:16px;line-height:21px;font-weight:bold;color:${txt};padding:0;">${esc(p.name)}</td></tr>`);
+  if (p.title) rows.push(`<tr><td style="${cell}color:${accent};">${esc(p.title)}</td></tr>`);
+  if (p.extra) rows.push(`<tr><td style="${cell}color:${muted};font-style:italic;">${esc(p.extra)}</td></tr>`);
+  if (c.company) rows.push(`<tr><td style="${cell}font-weight:bold;padding-top:2px;">${esc(c.company)}</td></tr>`);
+  rows.push(`<tr><td style="padding:0;height:8px;line-height:8px;font-size:8px;">&nbsp;</td></tr>`);
+  if (p.mobile) rows.push(`<tr><td style="${cell}"><span style="${lab}">M&nbsp;</span> <a href="${telHref(p.mobile)}" style="${link}">${esc(p.mobile)}</a></td></tr>`);
+  if (p.phone) rows.push(`<tr><td style="${cell}"><span style="${lab}">T&nbsp;</span> <a href="${telHref(p.phone)}" style="${link}">${esc(p.phone)}</a></td></tr>`);
+  if (p.email) rows.push(`<tr><td style="${cell}"><span style="${lab}">E&nbsp;</span> <a href="mailto:${esc(p.email)}" style="${link}">${esc(p.email)}</a></td></tr>`);
+  if (c.website) rows.push(`<tr><td style="${cell}"><span style="${lab}">W&nbsp;</span> <a href="${esc(c.website)}" style="${link}">${esc(prettyUrl(c.website))}</a></td></tr>`);
+  if (c.address) rows.push(`<tr><td style="${cell}color:${muted};font-size:12px;">${esc(c.address)}</td></tr>`);
+  const extraLinks = linksLine(p, c, cell, accent);
+  if (extraLinks) rows.push(`<tr><td style="${cell}padding-top:6px;">${extraLinks}</td></tr>`);
+
+  const visual = p.photo && isHttpsUrl(p.photo) ? p.photo : (isHttpsUrl(c.logo) ? c.logo : '');
+  const w = Math.max(40, Math.min(200, parseInt(c.logoWidth, 10) || 80));
+  const radius = visual === p.photo ? 'border-radius:50%;' : '';
+  const left = visual
+    ? `<td valign="top" style="vertical-align:top;padding:0 14px 0 0;width:${w}px;"><img src="${esc(visual)}" width="${w}" alt="${esc(c.company)}" style="display:block;width:${w}px;max-width:${w}px;height:auto;border:0;${radius}"></td>`
+    : '';
+  const border = visual ? `border-left:2px solid ${accent};padding:0 0 0 14px;` : `border-left:2px solid ${accent};padding:0 0 0 12px;`;
+
+  let html =
+    `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;font-family:${font};">` +
+    `<tr>${left}<td valign="top" style="vertical-align:top;${border}">` +
+    `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;">${rows.join('')}</table>` +
+    `</td></tr>`;
+  if (c.disclaimer) {
+    html += `<tr><td colspan="${visual ? 2 : 1}" style="font-family:${font};font-size:10px;line-height:14px;color:#9ca3af;padding:12px 0 0;max-width:340px;">${esc(c.disclaimer).replace(/\n/g, '<br>')}</td></tr>`;
+  }
+  return html + `</table>`;
+}
+
+// Version téléphone : pas de tableau (l'éditeur de signature d'Outlook mobile
+// les déforme), uniquement des blocs simples empilés.
+function buildPhone(p, c, withLogo) {
+  const font = c.font, accent = c.accent;
+  const txt = '#1f2937', muted = '#6b7280';
+  const line = `font-family:${font};font-size:13px;line-height:19px;color:${txt};margin:0;`;
+  const link = `color:${txt};text-decoration:none;`;
+  const lab = `color:${accent};font-weight:bold;font-size:11px;`;
+  const out = [];
+
+  if (withLogo && isHttpsUrl(c.logo)) {
+    const w = Math.max(40, Math.min(160, parseInt(c.logoWidth, 10) || 80));
+    out.push(`<div style="margin:0 0 8px;"><img src="${esc(c.logo)}" width="${w}" alt="${esc(c.company)}" style="display:block;width:${w}px;height:auto;border:0;"></div>`);
+  }
+  out.push(`<div style="font-family:${font};font-size:15px;line-height:20px;font-weight:bold;color:${txt};margin:0;">${esc(p.name)}</div>`);
+  const sub = [p.title, c.company].filter(Boolean).map(esc).join(' · ');
+  if (sub) out.push(`<div style="${line}color:${accent};">${sub}</div>`);
+  if (p.extra) out.push(`<div style="${line}color:${muted};font-style:italic;">${esc(p.extra)}</div>`);
+  out.push(`<div style="font-size:4px;line-height:4px;margin:0 0 6px;border-bottom:2px solid ${accent};width:32px;">&nbsp;</div>`);
+  if (p.mobile) out.push(`<div style="${line}"><span style="${lab}">M&nbsp;</span> <a href="${telHref(p.mobile)}" style="${link}">${esc(p.mobile)}</a></div>`);
+  if (p.phone) out.push(`<div style="${line}"><span style="${lab}">T&nbsp;</span> <a href="${telHref(p.phone)}" style="${link}">${esc(p.phone)}</a></div>`);
+  if (p.email) out.push(`<div style="${line}"><span style="${lab}">E&nbsp;</span> <a href="mailto:${esc(p.email)}" style="${link}">${esc(p.email)}</a></div>`);
+  if (c.website) out.push(`<div style="${line}"><span style="${lab}">W&nbsp;</span> <a href="${esc(c.website)}" style="${link}">${esc(prettyUrl(c.website))}</a></div>`);
+  const extraLinks = linksLine(p, c, line, accent);
+  if (extraLinks) out.push(`<div style="${line}margin-top:4px;">${extraLinks}</div>`);
+  if (c.disclaimer) out.push(`<div style="font-family:${font};font-size:10px;line-height:14px;color:#9ca3af;margin:10px 0 0;">${esc(c.disclaimer).replace(/\n/g, '<br>')}</div>`);
+  return `<div style="font-family:${font};color:${txt};">${out.join('')}</div>`;
+}
+
+function linksLine(p, c, base, accent) {
+  const links = [];
+  if (p.booking) links.push(`<a href="${esc(p.booking)}" style="color:${accent};font-weight:bold;text-decoration:none;">📅 Prendre rendez-vous</a>`);
+  if (c.linkedin) links.push(`<a href="${esc(c.linkedin)}" style="color:${accent};font-weight:bold;text-decoration:none;">LinkedIn</a>`);
+  return links.join(' &nbsp;·&nbsp; ');
+}
+
+function buildText(p, c) {
+  return [
+    p.name,
+    [p.title, c.company].filter(Boolean).join(' · '),
+    p.extra,
+    '',
+    p.mobile && 'M  ' + p.mobile,
+    p.phone && 'T  ' + p.phone,
+    p.email && 'E  ' + p.email,
+    c.website && 'W  ' + prettyUrl(c.website),
+    c.address,
+    p.booking && 'Rendez-vous : ' + p.booking,
+    c.disclaimer && '\n' + c.disclaimer
+  ].filter(v => v !== '' && v !== false && v != null).join('\n').replace(/\n{3,}/g, '\n\n');
+}
+
+function currentHtml() {
+  const p = state.profiles[state.active];
+  return state.variant === 'phone' ? buildPhone(p, state.company, state.phoneLogo) : buildDesktop(p, state.company);
+}
+
+/* ---------- Interface ---------- */
+
+const $ = id => document.getElementById(id);
+const PROFILE_FIELDS = ['name', 'title', 'extra', 'mobile', 'phone', 'email', 'booking', 'photo'];
+const COMPANY_FIELDS = ['company', 'address', 'website', 'linkedin', 'logo', 'logoWidth', 'accent', 'font', 'disclaimer'];
+
+function renderTabs() {
+  const tabs = $('tabs');
+  tabs.innerHTML = '';
+  state.profiles.forEach((p, i) => {
+    const b = document.createElement('button');
+    b.className = 'tab' + (i === state.active ? ' active' : '');
+    b.textContent = p.label || p.name || 'Profil ' + (i + 1);
+    b.onclick = () => { state.active = i; fillForm(); update(); };
+    tabs.appendChild(b);
+  });
+  const add = document.createElement('button');
+  add.className = 'tab add';
+  add.textContent = '+ Ajouter';
+  add.onclick = () => {
+    const label = prompt('Nom du profil (ex : Assistante 2)', 'Nouveau profil');
+    if (!label) return;
+    state.profiles.push(Object.assign(clone(DEFAULT_STATE.profiles[0]), { label, name: '', title: '', mobile: '', email: '' }));
+    state.active = state.profiles.length - 1;
+    fillForm(); update();
+  };
+  tabs.appendChild(add);
+  $('deleteProfile').disabled = state.profiles.length < 2;
+}
+
+function fillForm() {
+  const p = state.profiles[state.active];
+  PROFILE_FIELDS.forEach(f => { $('p_' + f).value = p[f] || ''; });
+  COMPANY_FIELDS.forEach(f => { $('c_' + f).value = state.company[f] ?? ''; });
+  $('phoneLogo').checked = !!state.phoneLogo;
+  setSeg('variantSeg', 'v', state.variant);
+  setSeg('screenSeg', 's', state.screen);
+  renderTabs();
+}
+
+function setSeg(id, key, val) {
+  document.querySelectorAll('#' + id + ' button').forEach(b => b.classList.toggle('active', b.dataset[key] === val));
+}
+
+function update() {
+  $('preview').innerHTML = currentHtml();
+  $('mail').className = 'mail ' + state.screen;
+  $('phoneLogo').parentElement.style.display = state.variant === 'phone' ? 'flex' : 'none';
+  $('logoWarn').classList.toggle('show', !!state.company.logo && !isHttpsUrl(state.company.logo));
+  saveState();
+}
+
+document.querySelectorAll('[data-scope]').forEach(el => {
+  el.addEventListener('input', () => {
+    const key = el.id.slice(2);
+    if (el.dataset.scope === 'profile') state.profiles[state.active][key] = el.value;
+    else state.company[key] = el.value;
+    update();
+  });
+});
+
+$('variantSeg').addEventListener('click', e => {
+  if (!e.target.dataset.v) return;
+  state.variant = e.target.dataset.v;
+  // On prévisualise naturellement la version téléphone sur un écran de téléphone
+  if (state.variant === 'phone') state.screen = 'phone';
+  fillForm(); update();
+});
+$('screenSeg').addEventListener('click', e => {
+  if (!e.target.dataset.s) return;
+  state.screen = e.target.dataset.s;
+  setSeg('screenSeg', 's', state.screen); update();
+});
+$('phoneLogo').addEventListener('change', e => { state.phoneLogo = e.target.checked; update(); });
+
+$('renameProfile').onclick = () => {
+  const p = state.profiles[state.active];
+  const label = prompt('Nom du profil', p.label || '');
+  if (label) { p.label = label; renderTabs(); saveState(); }
+};
+$('deleteProfile').onclick = () => {
+  if (state.profiles.length < 2) return;
+  const p = state.profiles[state.active];
+  if (!confirm('Supprimer le profil « ' + (p.label || p.name) + ' » ?')) return;
+  state.profiles.splice(state.active, 1);
+  state.active = 0;
+  fillForm(); update();
+};
+
+function toast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+// Copie « mise en forme » : c'est ce qu'il faut coller dans Outlook
+// (ordinateur comme téléphone), jamais le code brut.
+$('copyRich').onclick = async () => {
+  const html = currentHtml();
+  const text = buildText(state.profiles[state.active], state.company);
+  try {
+    await navigator.clipboard.write([new ClipboardItem({
+      'text/html': new Blob([html], { type: 'text/html' }),
+      'text/plain': new Blob([text], { type: 'text/plain' })
+    })]);
+    toast('Signature copiée ✓ Colle-la dans Outlook');
+  } catch (e) {
+    const node = $('preview');
+    const range = document.createRange();
+    range.selectNodeContents(node);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (err) {}
+    sel.removeAllRanges();
+    toast(ok ? 'Signature copiée ✓ Colle-la dans Outlook' : 'Copie impossible : sélectionne la signature et copie-la à la main');
+  }
+};
+
+async function copyText(text, msg) {
+  try { await navigator.clipboard.writeText(text); toast(msg); }
+  catch (e) {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); toast(msg); } catch (err) { toast('Copie impossible'); }
+    ta.remove();
+  }
+}
+
+$('copyCode').onclick = () => copyText(currentHtml(), 'Code HTML copié ✓');
+
+$('download').onclick = () => {
+  const p = state.profiles[state.active];
+  const doc = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>${currentHtml()}</body></html>`;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([doc], { type: 'text/html' }));
+  a.download = 'Signature ' + (p.label || p.name || '').replace(/[\\/:*?"<>|]/g, '') + '.htm';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+};
+
+$('shareLink').onclick = () => {
+  const payload = { company: state.company, profile: state.profiles[state.active], variant: state.variant };
+  const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+  copyText(location.origin + location.pathname + '#p=' + b64, 'Lien copié ✓ Envoie-le-toi (ou à ton assistante)');
+};
+
+fillForm();
+update();
+</script>
+</body>
+</html>

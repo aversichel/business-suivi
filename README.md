@@ -20,3 +20,7 @@ L'app fonctionne hors ligne et sauvegarde tes dossiers localement.
 ## Mise à jour
 
 Pour mettre à jour l'app après l'installation, supprime et réinstalle depuis le navigateur.
+
+## Signature mail
+
+`signature/index.html` : générateur de signature e-mail pour Outlook (ordinateur et Android), avec plusieurs profils (moi, assistante…). Ouvre `https://<utilisateur>.github.io/business-suivi/signature/`, remplis les champs, puis **Copier la signature** et colle-la dans les paramètres de signature d'Outlook. Le logo se dépose dans `signature/img/`.
