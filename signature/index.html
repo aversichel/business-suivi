@@ -240,7 +240,8 @@ const PROFILE_SCHEMA = [
   ['assistantIntro', 'Assistante — texte', 'text', 'ex : Mon assistante,'],
   ['assistantName', 'Assistante — prénom'],
   ['assistantEmail', 'Assistante — e-mail', 'email'],
-  ['check', 'divider', 'Trait vertical entre la photo et le logo'],
+  ['check', 'logoInline', 'Logo encastré à côté du nom'],
+  ['check', 'divider', 'Trait vertical après la photo'],
   ['check', 'showLegal', 'Afficher les mentions réglementaires']
 ];
 
@@ -266,7 +267,7 @@ const FONTS = [
 
 const EMPTY_PROFILE = {
   label: '', name: '', title: '', photo: '', address: '', phone1Label: '', phone1: '', phone2Label: '', phone2: '',
-  website: '', email: '', booking: '', assistantIntro: '', assistantName: '', assistantEmail: '', divider: false, showLegal: true
+  website: '', email: '', booking: '', assistantIntro: '', assistantName: '', assistantEmail: '', logoInline: true, divider: false, showLegal: true
 };
 
 const DEFAULT_STATE = {
@@ -292,7 +293,7 @@ const DEFAULT_STATE = {
     Object.assign({}, EMPTY_PROFILE, {
       label: 'Charlotte & Camille', name: 'Charlotte & Camille', title: 'Assistantes de choc ⚡',
       photo: 'assistantes.png', phone1Label: 'Charlotte', phone1: '06 58 04 21 46',
-      phone2Label: 'Camille', phone2: '06 49 50 51 24', divider: true, showLegal: false
+      phone2Label: 'Camille', phone2: '06 49 50 51 24', logoInline: false, divider: true, showLegal: false
     })
   ],
   active: 0,
@@ -324,7 +325,7 @@ function loadState() {
   if (!s || !Array.isArray(s.profiles) || !s.profiles.length) return clone(DEFAULT_STATE);
   s = Object.assign(clone(DEFAULT_STATE), s);
   s.company = Object.assign(clone(DEFAULT_STATE.company), s.company);
-  s.profiles = s.profiles.map(p => Object.assign(clone(EMPTY_PROFILE), p));
+  s.profiles = s.profiles.map(p => Object.assign(clone(EMPTY_PROFILE), { logoInline: !p.divider }, p));
   if (s.active >= s.profiles.length) s.active = 0;
   return s;
 }
@@ -412,18 +413,28 @@ function buildDesktop(p, c, pv) {
   const S = styles(c);
   const PHOTO = 90, LOGO_W = 80, LOGO_H = 38;
 
+  // Logo « encastré » : à côté du nom, les coordonnées s'alignent dessous
+  const inline = p.logoInline && c.logo;
+
   // Bloc A : photo (+ trait) + logo
   let a = `<table ${TABLE}><tr>`;
   if (p.photo) a += `<td valign="middle" style="vertical-align:middle;padding:0 16px 12px 0;"><img src="${img(p.photo, pv)}" width="${PHOTO}" height="${PHOTO}" alt="${esc(p.name)}" style="display:block;border:0;width:${PHOTO}px;height:${PHOTO}px;"></td>`;
   if (p.divider) a += `<td width="2" style="width:2px;background:#1f2937;font-size:0;line-height:0;padding:0;">&nbsp;</td><td width="16" style="width:16px;font-size:0;line-height:0;padding:0 0 12px;">&nbsp;</td>`;
-  if (c.logo) a += `<td valign="middle" style="vertical-align:middle;padding:0 16px 12px 0;"><img src="${img(c.logo, pv)}" width="${LOGO_W}" height="${LOGO_H}" alt="${esc(c.company)}" style="display:block;border:0;width:${LOGO_W}px;height:${LOGO_H}px;"></td>`;
+  if (c.logo && !inline) a += `<td valign="middle" style="vertical-align:middle;padding:0 16px 12px 0;"><img src="${img(c.logo, pv)}" width="${LOGO_W}" height="${LOGO_H}" alt="${esc(c.company)}" style="display:block;border:0;width:${LOGO_W}px;height:${LOGO_H}px;"></td>`;
   a += `</tr></table>`;
-  const aW = (p.photo ? PHOTO + 16 : 0) + (p.divider ? 18 : 0) + (c.logo ? LOGO_W + 16 : 0);
+  const aW = (p.photo ? PHOTO + 16 : 0) + (p.divider ? 18 : 0) + (c.logo && !inline ? LOGO_W + 16 : 0);
 
   // Bloc B : identité, coordonnées, rdv / assistante
-  let b = `<div style="${S.t(18, 24, '#111827')}"><b>${esc(p.name)}</b>` +
+  let id = `<div style="${S.t(18, 24, '#111827')}"><b>${esc(p.name)}</b>` +
     (c.company ? ` <span style="color:#9ca3af;">|</span> <i>${esc(c.company)}</i>` : '') + `</div>`;
-  if (p.title) b += `<div style="${S.t(14, 20, '#374151', 'padding:2px 0 12px;')}">${esc(p.title)}</div>`;
+  if (p.title) id += `<div style="${S.t(14, 20, '#374151', 'padding:2px 0 0;')}">${esc(p.title)}</div>`;
+  let b = inline
+    ? fluid([
+        { w: 108, html: `<div style="padding:0 0 8px;"><img src="${img(c.logo, pv)}" width="88" height="42" alt="${esc(c.company)}" style="display:block;border:0;width:88px;height:42px;"></div>` },
+        { w: 390, html: id }
+      ])
+    : id;
+  b += `<div style="font-size:12px;line-height:12px;">&nbsp;</div>`;
 
   const left = [], right = [];
   if (p.address) left.push(iconRow('icon-home.png', esc(p.address), S, 18, pv));
@@ -453,7 +464,7 @@ function buildDesktop(p, c, pv) {
     b += `<table ${TABLE} width="100%"><tr><td style="border-top:1px solid #d1d5db;font-size:1px;line-height:1px;padding:0 0 10px;">&nbsp;</td></tr></table>`;
     b += fluid([{ w: 270, html: rdv ? `<div style="padding:0 0 8px;">${rdv}</div>` : '' }, { w: 200, html: asst ? `<div style="padding:0 0 8px;">${asst}</div>` : '' }]);
   }
-  const bW = 470;
+  const bW = inline ? 500 : 470;
 
   let html = `<div style="${S.t(13, 20)}max-width:${aW + bW}px;">` + fluid([{ w: aW, html: a }, { w: bW, html: b }]);
 
